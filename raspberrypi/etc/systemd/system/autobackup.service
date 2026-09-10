@@ -1,0 +1,11 @@
+[Unit]
+Description=autobackups //boot/firmware/config.txt and ip address to github repo
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+type=oneshot
+RemainAfterExit=yes
+ExecStart=//boot/autobackup.sh
+[Install]
+WantedBy=multi-user.target
