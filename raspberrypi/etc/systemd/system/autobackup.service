@@ -4,8 +4,10 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-type=oneshot
+Type=oneshot
 RemainAfterExit=yes
 ExecStart=//boot/autobackup.sh
+User=stu3340
+
 [Install]
 WantedBy=multi-user.target
