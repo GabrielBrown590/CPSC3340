@@ -1,0 +1,54 @@
+09/10 Lab 1
+Names: Jonathan Zeng and Gabriel Brown
+
+Notes:
+
+- Created a github repo
+- Created a directory called "raspberrypi" in githubrepo
+- Within the "raspberrypi" directory, created a .config directory to mimic the usr directory on the raspberry pi (may add more later)
+- Created a "ip.md" file in the .config directory
+- Connected to the yale wireless network
+- Used the command "ip a" on the pi to get ip address
+- For example, it was 10.67.64.78/20 for our pi. (the number after inet in wlan0)
+- ssh'd into the rpi with ssh stu3340@10.67.64.78 and uses password cpsc3340! when prompted.
+- Now to generate ssh key on rpi (following gh docs):
+    - Used the command ssh-keygen -t ed25519 -C "email"
+    - Now looking to add ssh key to ssh agent (Linux instructions are different from windows)
+    - Used the command 'eval "$(ssh-agent -s)"' (Got Agent pid 2695 as a response)
+    - Used the command "ssh-add /home/stu3340/.ssh/id_ed22519" (got identity added) (don't add .pub at the end) 
+    - Logging into github takes a long time on rpi 
+        - To try to resolve, we tried switching to other networks (didn't work)
+        - Went to nmtui and then to network settings, tried changing security to WPA & WPA2 Enterprise
+        - For our purposes, we just ssh'd into from our laptop and copied the 
+        - We can ping 9.9.9.9 which shows we do have a connection, but chromium doesn't load.
+- For creating a script, we made a directory in Documents/cpsc3340/module1/lab1
+- Now writing a script in this folder called autobackup.sh
+    - Wrote two lines: "cp //bot/config.txt ~/Documents/cpsc3340/module/lab1"
+    - "hostname -I > ip.md
+    - Had to chmod 777 to be able to execute it
+    - config.txt has moved to //boot/firmware/config.txt
+    - To make it run once per boot after networking has been achieved
+        - Create a file in /etc/systemd/system called autobackup.service
+        - Had to sudo chmod 777 autobackup.service
+        - Inside the file: [Unit] (then write Descriptions, Requires, After)
+    - Did sudo systemctl enable autobackup.service
+    - Still not working after that. Service is enabled when checked.
+    - Now trying to move autobackup.sh to //boot (and changed path in 
+    - Now trying to add shebang at start of .sh (fixed the exec format error)
+    - Now realized that script did not have absolute path
+    - Now it works
+- TODO: Github integration
+
+Part 2:Done solo
+-Added the following lines to autobackup.sh
+ git -C //home/stu3340/CPSC3340 commit -am "auto updated files and IP address"
+ git -C //home/stu3340/CPSC3340 push origin main
+-This kept throwing errors regarding permissions so I tried changing the owner of the files I wanted to back up
+-This failed so eventually I added the -u stu3340 option to my git commands
+-This still failed so I removed it and went back to my service file and added the line User=stu3340 under service to run as my user instead of root. which fixed my problem.
+-After this I got a problem with my key not working at which point I realized that I wasn't actually using the key
+-Ran git -C /home/stu3340/CPSC3340 remote set-url origin git@github.com:GabrielBrown590/CPSC3340.git to switch to ssh instead of https so I can actually use my key
+-this finally worked, allowing me to push to my repo automatically
+-I then decided I wanted to backup my backup scripts so i added the following lines to autobackup.sh
+cp //boot/autobackup.sh //home/stu3340/CPSC3340/raspberrypi/boot/autobackup.sh
+cp //etc/systemd/system/autobackup.service //home/stu3340/CPSC3340/raspberrypi/etc/systemd/system/autobackup.service
