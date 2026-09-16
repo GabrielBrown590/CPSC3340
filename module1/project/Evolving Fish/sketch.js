@@ -46,24 +46,12 @@
             this.color = options.color;
         }
 
-        dispay()
+        display()
         {
             push();
 
             //TODO color
             fill("blue")
-
-            //fish body
-            if(this.type == "r")
-                {
-                    rect(this.x, this.y, this.width, this.height,
-                        this.c1Radius, this.c2Radius, this.c3Radius, this.c4Radius);
-                }
-            else if(this.type == "e")
-                {
-                    ellipse(this.x, this.y, this.width, this.height);
-                }
-
 
             //fish tail
             fill("blue");
@@ -77,6 +65,18 @@
                     //triangle with one point at outer x and two at inner x. Outer point has y centered and the inner points are at tailTopy and tailBoty
                     triangle(this.tailInnerx, this.tailTopy, this.tailInnerx, this.tailBoty, this.tailOuterx, this.y)
                 }  
+
+            //fish body
+            if(this.type == "r")
+                {
+                    rect(this.x, this.y, this.width, this.height,
+                        this.c1Radius, this.c2Radius, this.c3Radius, this.c4Radius);
+                }
+            else if(this.type == "e")
+                {
+                    ellipse(this.x, this.y, this.width, this.height);
+                }
+
             
             //fish eye
             fill("black")
@@ -86,37 +86,89 @@
 
             pop();
         }
+
+        collidingWithOther(other)
+        {
+            //calculate rectangle that encompasses this fish
+            let myLeft = this.x - 0.5 * this.width;
+            let myRight = this.x + 0.5 * this.width;
+            let myTop = this.y - 0.5 * this.height;
+            let myBottom = this.y + 0.5 * this.height;
+            
+            //calculate rectangle encompassing other fish
+            let otherLeft = other.x - 0.5 * other.width;
+            let otherRight = other.x + 0.5 * other.width;
+            let otherTop = other.y - 0.5 * other.height;
+            let otherBottom = other.y + 0.5 * other.height;
+
+            //test to make sure there is no overlap
+            return myLeft < otherRight && myRight > otherLeft &&
+                myTop < otherBottom && myBottom > otherTop;
+        }
     }
+    var fishArr = [];
     function generateNormalFish()
     {
+        let attemptNumber = 1;
+        //creates a fish and ensures it does not occupy the space of another fish.
+        do
+        {
+            //mark that this is a new attempt so we dont try too many times
+            attemptNumber++;
+
+            //generate random height and width and rest of options based on what I consider semi-normal paramaters
+            let w = random(60, 220);
+            let h = random(30, 110);
+            let normalOptions = 
+            {
+                type: random(["r", "e"]),
+                x: random(w, width-w), y: random(h, height-h),
+                w: w, h: h,
+                c1RadiusFactor: random(0, 0.5), c2RadiusFactor: random(0, 0.5), c3RadiusFactor: random(0, 0.5), c4RadiusFactor: random(0, 0.5),
+                eyeSizeFactor: random(0.1, 0.3),
+                eyeOffsetx: random(0.65, 0.9), eyeOffsety: random(0.35, 0.65),
+                tail:{
+                    type:random(["w","n"]),
+                    innerxFactor: random(0.3, 0.7),
+                    outerxFactor: random(0.2, 0.6),
+                    spreadFactor: random(0.4, 1.0)
+                },
+                color: "blue"
+            }
+
+            //create this fish using parameters and test if he is colliding with another fish, if so, regenerate him and try again up to 30 times
+            var newFish = new Fish(normalOptions);
+            var newFishColliding = false;
+            for (let i = 0; i < fishArr.length; i++)
+                {
+                    if(newFish.collidingWithOther(fishArr[i]))
+                        {
+                            newFishColliding = true;
+                            
+                        }
+                }
+        }
+        while(newFishColliding && attemptNumber < 50)
+
+        return newFish;
         
     }
 
-        var testFishR;
+        
 
     function setup() {
         createCanvas(800, 600);
         rectMode(CENTER);
-        testFishR = new Fish
-        ({
-            type: "r",
-            x: 400, y: 400,
-            w: 200, h: 100,
-            c1RadiusFactor: 0.2, c2RadiusFactor: 0.2, c3RadiusFactor: 0.2, c4RadiusFactor: 0.2,
-            eyeSizeFactor: 0.3,
-            eyeOffsetx: 0.5, eyeOffsety: 0.5,
-            tail:{
-                type:"w",
-                innerxFactor:0.5,
-                outerxFactor:0.5,
-                spreadFactor:0.5
-            },
-            color: "blue"
-
-        });        
+        for(let i = 0; i< 10; i++)
+            {
+                fishArr[i] = generateNormalFish();
+            }
     }
 
     function draw() {
         background("220");
-        testFishR.dispay();
+        for(let i = 0; i< fishArr.length; i++)
+            {
+                fishArr[i].display();
+            }
     }
