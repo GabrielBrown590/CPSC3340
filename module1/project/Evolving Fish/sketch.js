@@ -22,9 +22,9 @@
             this.centery = options.y;
                 
             
-            //calculate eye location
-            this.eyex = lerp(this.centerx-0.5*this.width, this.centerx+0.5*this.width, options.eyeOffsetx);
-            this.eyey = lerp(this.centery-0.5*this.height, this.centery+0.5*this.height, options.eyeOffsety);
+            //calculate eye location relative to center
+            this.eyexOffset = lerp(-0.5*this.width, 0.5*this.width, options.eyeOffsetx);
+            this.eyeyOffset = lerp(-0.5*this.height, 0.5*this.height, options.eyeOffsety);
         
             //calculate eye size in pixels
             this.eyeSize = options.eyeSizeFactor * min(this.height, this.width);
@@ -37,18 +37,40 @@
             this.tailType = options.tail.type;
 
             //calculate the tail points. innerxFactor is how far into the fish the tail starts. outerxFactor is how far out the tail goes. spreadfactor is how far spread the points of the fish tail are.
-            this.tailInnerx = this.x - options.tail.innerxFactor * 0.5  * this.width;
-            this.tailOuterx = this.x- 0.5*this.width - options.tail.outerxFactor * this.width;
-            this.tailTopy = this.y - options.tail.spreadFactor * 0.5 * this.height;
-            this.tailBoty = this.y + options.tail.spreadFactor * 0.5 * this.height;
+            this.tailInnerxOffset = -options.tail.innerxFactor * 0.5  * this.width;
+            this.tailOuterxOffset = -0.5*this.width - options.tail.outerxFactor * this.width;
+            this.tailTopyOffset = -options.tail.spreadFactor * 0.5 * this.height;
+            this.tailBotyOffset = options.tail.spreadFactor * 0.5 * this.height;
+
+            //velocity
+            this.vx = options.vx;
+            this.vy = options.vy;
+
+            //angle. Starts off facing straight
+            this.angle = 0
 
             //color
             this.color = options.color;
         }
+        move()
+        {
+            //change velocity randomly
+            this.vx += random(-0.2,0.2)
+            this.vy += random(-0.2,0.2)
 
+            //change position based on velocity
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // face direction of travel
+            this.angle = atan2(this.vy, this.vx); 
+        }
         display()
         {
             push();
+            translate(this.x, this.y);
+            rotate(this.angle);
+            translate(-this.x, -this.y);
 
             //TODO color
             fill("blue")
@@ -58,12 +80,12 @@
             if (this.tailType == "w")
                 {
                     //triangle with one point at inner x, and two at outer x. The outer points are at tailTopy and tailBoty
-                    triangle(this.tailInnerx, this.y, this.tailOuterx, this.tailTopy, this.tailOuterx, this.tailBoty)
+                    triangle(this.tailInnerxOffset+this.x, this.y, this.tailOuterxOffset+this.x, this.tailTopyOffset+this.y, this.tailOuterxOffset+this.x, this.tailBotyOffset+this.y)
                 }
             else if (this.tailType == "n")
                 {
                     //triangle with one point at outer x and two at inner x. Outer point has y centered and the inner points are at tailTopy and tailBoty
-                    triangle(this.tailInnerx, this.tailTopy, this.tailInnerx, this.tailBoty, this.tailOuterx, this.y)
+                    triangle(this.tailInnerxOffset+this.x, this.tailTopyOffset+this.y, this.tailInnerxOffset+this.x, this.tailBotyOffset+this.y, this.tailOuterxOffset+this.x, this.y)
                 }  
 
             //fish body
@@ -80,7 +102,7 @@
             
             //fish eye
             fill("black")
-            circle(this.eyex, this.eyey, this.eyeSize);
+            circle(this.eyexOffset+this.x, this.eyeyOffset+this.y, this.eyeSize);
 
             
 
@@ -117,8 +139,8 @@
             attemptNumber++;
 
             //generate random height and width and rest of options based on what I consider semi-normal paramaters
-            let w = random(60, 220);
-            let h = random(30, 110);
+            let w = random(40, 120);
+            let h = random(20, 60);
             let normalOptions = 
             {
                 type: random(["r", "e"]),
@@ -133,6 +155,7 @@
                     outerxFactor: random(0.2, 0.6),
                     spreadFactor: random(0.4, 1.0)
                 },
+                vx:random(-10, 10), vy:random(-10,10),
                 color: "blue"
             }
 
@@ -169,6 +192,7 @@
         background("220");
         for(let i = 0; i< fishArr.length; i++)
             {
+                fishArr[i].move();
                 fishArr[i].display();
             }
     }
