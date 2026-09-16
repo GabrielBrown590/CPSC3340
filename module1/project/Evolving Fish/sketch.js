@@ -1,3 +1,14 @@
+
+//adopted from https://sighack.com/post/procedural-color-algorithms-color-variations
+function hsbModify(base, hv, sv, bv) {
+    /* The hue should be wrapped around if it crosses 360 */
+    new_hue = (hue(base) + hv) % 360;
+    new_sat = constrain(saturation(base) + sv, 0, 100);
+    new_bri = constrain(brightness(base) + bv, 0, 100);
+  return color(new_hue, new_sat, new_bri);
+}
+    
+//original code
     class Fish
     {
         constructor(options)
@@ -58,12 +69,29 @@
             this.vx += random(-0.2,0.2)
             this.vy += random(-0.2,0.2)
 
+            //cap speed
+            let speedLimit=5
+            if (this.vx > speedLimit) this.vx = speedLimit;
+            if (this.vx < -speedLimit) this.vx = -speedLimit;
+            if (this.vy > speedLimit) this.vy = speedLimit;
+            if (this.vy < -speedLimit) this.vy = -speedLimit;
+
             //change position based on velocity
             this.x += this.vx;
             this.y += this.vy;
 
-            // face direction of travel
-            this.angle = atan2(this.vy, this.vx); 
+            //Stay on screen and towards the center
+            if(this.x > width || this.x < 0) this.vx = this.vx * -1;
+            if(this.y > height || this.y < 0) this.vy = this.vy * -1;
+            let centerx = width/2;
+            let centery = height/2;
+            let pullStrength = 0.015;
+            this.vx += (centerx - this.x) * pullStrength * 0.01;
+            this.vy += (centery - this.y) * pullStrength * 0.01;
+
+            // face direction of travel(smoothly)
+            let targetAngle = atan2(this.vy, this.vx); 
+            this.angle = lerp(this.angle, atan2(this.vy, this.vx), 0.03); 
         }
         display()
         {
@@ -73,10 +101,10 @@
             translate(-this.x, -this.y);
 
             //TODO color
-            fill("blue")
+            fill(this.color)
 
             //fish tail
-            fill("blue");
+            fill(this.color);
             if (this.tailType == "w")
                 {
                     //triangle with one point at inner x, and two at outer x. The outer points are at tailTopy and tailBoty
@@ -129,8 +157,10 @@
         }
     }
     var fishArr = [];
+    var colorPallete = [];
     function generateNormalFish()
     {
+        const fishScale = 0.6; //a var to scale fish while keeping them proportional
         let attemptNumber = 1;
         //creates a fish and ensures it does not occupy the space of another fish.
         do
@@ -139,8 +169,8 @@
             attemptNumber++;
 
             //generate random height and width and rest of options based on what I consider semi-normal paramaters
-            let w = random(40, 120);
-            let h = random(20, 60);
+            let w = random(40, 120)*fishScale;
+            let h = random(20, 60)*fishScale;
             let normalOptions = 
             {
                 type: random(["r", "e"]),
@@ -155,8 +185,8 @@
                     outerxFactor: random(0.2, 0.6),
                     spreadFactor: random(0.4, 1.0)
                 },
-                vx:random(-10, 10), vy:random(-10,10),
-                color: "blue"
+                vx:random(-3, 3), vy:random(-3,3),
+                color: random(colorPallete)
             }
 
             //create this fish using parameters and test if he is colliding with another fish, if so, regenerate him and try again up to 30 times
@@ -182,6 +212,14 @@
     function setup() {
         createCanvas(800, 600);
         rectMode(CENTER);
+        colorMode(HSB, 360, 100, 100);
+        //setup color pallete
+        colorPallete.push(color(35, 89, 100));
+        colorPallete.push(color(34, 59, 100));
+        colorPallete.push(color(0, 0, 100));
+        colorPallete.push(color(176, 16, 95));
+        colorPallete.push(color(174, 77, 77));
+
         for(let i = 0; i< 10; i++)
             {
                 fishArr[i] = generateNormalFish();
