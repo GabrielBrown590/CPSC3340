@@ -88,8 +88,9 @@ class Fish
                     spreadFactor: genOffspringNum(this.tail.spreadFactor, otherFish.tail.spreadFactor)
                 },
                 vx:random(-3, 3), vy:random(-3,3),
-                color: random(colorPallete)
+                color: offspringColor(this.color,otherFish.color)
             }
+            return new Fish(childOptions)
         }
 
         move()
