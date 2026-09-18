@@ -1,14 +1,5 @@
 
-//adopted from https://sighack.com/post/procedural-color-algorithms-color-variations
-function hsbModify(base, hv, sv, bv) {
-    /* The hue should be wrapped around if it crosses 360 */
-    new_hue = (hue(base) + hv) % 360;
-    new_sat = constrain(saturation(base) + sv, 0, 100);
-    new_bri = constrain(brightness(base) + bv, 0, 100);
-  return color(new_hue, new_sat, new_bri);
-}
-    
-//original code
+
     var fishArr = [];
     var colorPallete = [];
     function generateNormalFish()
