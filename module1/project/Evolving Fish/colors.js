@@ -8,7 +8,7 @@ function hsbModify(base, hv, sv, bv) {
 }
     
 //original code
-var colorGeneticVariance = 10; //different var for color variance because its different from physical
+var colorGeneticVariance = 30; //different var for color variance because its different from physical
 function averageHues(h1, h2)
 {
     let diff = h2 - h1;

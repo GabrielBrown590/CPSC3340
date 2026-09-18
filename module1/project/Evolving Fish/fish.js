@@ -1,11 +1,11 @@
-var geneticVariance = 0.1;//var to decide how much randomness is introduced into reproduction
+var geneticVariance = 0.3;//var to decide how much randomness is introduced into reproduction
 
 //helper function that generates a random number between the two other numbers and applies genetic variance. Doesnt care about which num comes first
 function genOffspringNum(p1Num, p2Num)
 {
-    lowerNum = min(p1Num, p2Num);
-    upperNum = max(p1Num, p2Num);
-    retNum = random(lowerNum, upperNum) * random(1-geneticVariance,1+geneticVariance);
+    let lowerNum = min(p1Num, p2Num);
+    let upperNum = max(p1Num, p2Num);
+    let retNum = random(lowerNum, upperNum) * random(1-geneticVariance,1+geneticVariance);
     return retNum;
 }
 
@@ -27,6 +27,11 @@ class Fish
             this.c2Radius=options.c2RadiusFactor * min(this.height, this.width);
             this.c3Radius=options.c3RadiusFactor * min(this.height, this.width);
             this.c4Radius=options.c4RadiusFactor * min(this.height, this.width);
+            //save the radius factors for offpsring reasons
+            this.c1RadiusFactor=options.c1RadiusFactor;
+            this.c2RadiusFactor=options.c2RadiusFactor;
+            this.c3RadiusFactor=options.c3RadiusFactor;
+            this.c4RadiusFactor=options.c4RadiusFactor;
 
             //set the center coodinates
             this.centerx = options.x;
@@ -36,10 +41,14 @@ class Fish
             //calculate eye location relative to center
             this.eyexOffset = lerp(-0.5*this.width, 0.5*this.width, options.eyeOffsetx);
             this.eyeyOffset = lerp(-0.5*this.height, 0.5*this.height, options.eyeOffsety);
+            //save original eyeoffset for offspring
+            this.originalEyeOffsetx = options.eyeOffsetx;
+            this.originalEyeOffsety = options.eyeOffsety;
         
             //calculate eye size in pixels
             this.eyeSize = options.eyeSizeFactor * min(this.height, this.width);
-            
+            //save original eyesize factor
+            this.eyeSizeFactor=options.eyeSizeFactor
 
 
             //set all tail factors
@@ -52,6 +61,9 @@ class Fish
             this.tailOuterxOffset = -0.5*this.width - options.tail.outerxFactor * this.width;
             this.tailTopyOffset = -options.tail.spreadFactor * 0.5 * this.height;
             this.tailBotyOffset = options.tail.spreadFactor * 0.5 * this.height;
+            //save the tail factors for offspring reasons
+            this.tail = options.tail;
+
 
             //velocity
             this.vx = options.vx;
@@ -68,21 +80,21 @@ class Fish
         }
         reproduce(otherFish)
         {
-            childOptions = 
+            let childOptions = 
             {
                 type: random([this.type, otherFish.type]),
                 x: (this.x + otherFish.x)/2, y: (this.y + otherFish.y)/2,
-                w: genOffspringNum(this.w, otherFish.w),
-                h: genOffspringNum(this.h, otherFish.h),
+                w: genOffspringNum(this.width, otherFish.width),
+                h: genOffspringNum(this.height, otherFish.height),
                 c1RadiusFactor: genOffspringNum(this.c1RadiusFactor, otherFish.c1RadiusFactor),
                 c2RadiusFactor: genOffspringNum(this.c2RadiusFactor, otherFish.c2RadiusFactor),
                 c3RadiusFactor: genOffspringNum(this.c3RadiusFactor, otherFish.c3RadiusFactor),
                 c4RadiusFactor: genOffspringNum(this.c4RadiusFactor, otherFish.c4RadiusFactor),
                 eyeSizeFactor: genOffspringNum(this.eyeSizeFactor, otherFish.eyeSizeFactor),
-                eyeOffsetx: genOffspringNum(this.eyeOffsetx),
-                eyeOffsety: genOffspringNum(this.eyeOffsety),
+                eyeOffsetx: genOffspringNum(this.originalEyeOffsetx, otherFish.originalEyeOffsetx),
+                eyeOffsety: genOffspringNum(this.originalEyeOffsety, otherFish.originalEyeOffsety),
                 tail:{
-                    type:random([this.tail.type, otherFish.tail.type]),
+                    type:random([this.tailType, otherFish.tailType]),
                     innerxFactor: genOffspringNum(this.tail.innerxFactor, otherFish.tail.innerxFactor),
                     outerxFactor: genOffspringNum(this.tail.outerxFactor, otherFish.tail.outerxFactor),
                     spreadFactor: genOffspringNum(this.tail.spreadFactor, otherFish.tail.spreadFactor)
@@ -125,13 +137,6 @@ class Fish
         }
         display()
         {
-
-            //logic to slow down fish reproduction
-            if (this.framesUntilReady > 0)
-                {
-                    this.framesUntilReady--;
-                }
-
 
             push();
             translate(this.x, this.y);

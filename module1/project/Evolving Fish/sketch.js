@@ -2,6 +2,41 @@
 
     var fishArr = [];
     var colorPallete = [];
+
+    function checkBreeding()
+    {
+        let breedingChance = 0.02
+        //check every fish every frame
+        for(let i = 0; i < fishArr.length; i++)
+            {
+                //if not ready yet, decrease frames until ready
+                if(fishArr[i].framesUntilReady > 0)
+                    {
+                        fishArr[i].framesUntilReady -= 1;
+                    }
+                else
+                    {
+                        //otherwise check for possible collissions
+                        for(let j = 0; i < fishArr.length; i++)
+                        {
+                            if(
+                                fishArr[i].collidingWithOther(fishArr[j]) &&
+                                fishArr[j].framesUntilReady == 0
+                            )
+                            {
+                                if(random() < breedingChance)
+                                    {
+                                        fishArr.push(fishArr[i].reproduce(fishArr[j]));
+                                        fishArr[i].framesUntilReady = 600;
+                                        fishArr[j].framesUntilReady = 600;
+                                    }
+                            }
+                        }
+                    }
+                
+            }
+    }
+
     function generateNormalFish()
     {
         const fishScale = 0.6; //a var to scale fish while keeping them proportional
@@ -58,11 +93,16 @@
         rectMode(CENTER);
         colorMode(HSB, 360, 100, 100);
         //setup color pallete
-        colorPallete.push(color(35, 89, 100));
-        colorPallete.push(color(34, 59, 100));
-        colorPallete.push(color(0, 0, 100));
-        colorPallete.push(color(176, 16, 95));
-        colorPallete.push(color(174, 77, 77));
+        colorPallete.push(color(15, 85, 100));   // coral red
+        colorPallete.push(color(30, 90, 100));   // tangerine
+        colorPallete.push(color(45, 85, 100));   // gold
+        colorPallete.push(color(50, 40, 100));   // pale yellow
+        colorPallete.push(color(190, 70, 95));   // sky cyan
+        colorPallete.push(color(205, 80, 90));   // ocean blue
+        colorPallete.push(color(260, 55, 90));   // periwinkle purple
+        colorPallete.push(color(320, 65, 95));   // hot pink
+        colorPallete.push(color(340, 50, 100));  // rose
+        colorPallete.push(color(0, 0, 100));     // white
 
         for(let i = 0; i< 10; i++)
             {
@@ -71,7 +111,8 @@
     }
 
     function draw() {
-        background("220");
+        background(190, 45, 55);
+        checkBreeding();
         for(let i = 0; i< fishArr.length; i++)
             {
                 fishArr[i].move();
