@@ -1,0 +1,18 @@
+-We looked up to find which config files would be most important to backup
+-We decided on /etc/ssh/ssh_config and /etc/ssh/sshd_config and /etc/profile and etc/passwd
+-We edited our boot/autobackup.sh file to include a cp line from each file we wanted to save to our local repo which was automatically pushed to our GitHub repo
+-We used scp to copy the ip file from the pi to our computer with the command scp stu3340@raspberrypiIP:filepath localfilepath
+
+-We used scp then to take the private sshkey from our pi and store it in our own .ssh folder
+-We had a quick issue with forgetting to use ~ instead of // but this was fixed easiy
+
+-to use an ssh key we tried to add -i pathToKey to our scp command but this kept failing
+-We tried many things including permissions, verifying that the key matched, etc.
+-Issue turned out to be that we needed the public key on our local computer as well at this point we could scp with scp -i pathToKey stu3340@raspberrypiIP:filepath localfilepath
+
+
+
+-We then realized we have to push the file via scp and not pull so we downloaded an ssh server on our computer and created an authorized_keys file with the public key with the command keyfile.pub > authorized_keys which worked
+-After doing this, to scp just use the command scp -i pathToKey pathToFileToPush username@ip:pathToDestination
+
+-then to automate we used crontab -e to open our crontab and then we used the command "*/10 * * * * PathToScript" to run it every 10 minutes
