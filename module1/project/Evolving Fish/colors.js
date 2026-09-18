@@ -32,4 +32,5 @@ function offspringColor(p1Color, p2Color)
     //keep these fixed so the color stays looking good
     let retSat = random(60, 85);
     let retBri = random(75, 95);
+    return color(retHue, retSat, retBri);
 }
