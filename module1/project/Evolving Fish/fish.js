@@ -98,9 +98,8 @@ class Fish
                 c3RadiusFactor: genOffspringNum(this.c3RadiusFactor, otherFish.c3RadiusFactor),
                 c4RadiusFactor: genOffspringNum(this.c4RadiusFactor, otherFish.c4RadiusFactor),
                 eyeSizeFactor: genOffspringNum(this.eyeSizeFactor, otherFish.eyeSizeFactor),
-                eyeOffsetx: genOffspringNum(this.originalEyeOffsetx, otherFish.originalEyeOffsetx),
-                eyeOffsety: genOffspringNum(this.originalEyeOffsety, otherFish.originalEyeOffsety),
-                tail:{
+                eyeOffsetx: constrain(genOffspringNum(this.originalEyeOffsetx, otherFish.originalEyeOffsetx), 0, 1),
+                eyeOffsety: constrain(genOffspringNum(this.originalEyeOffsety, otherFish.originalEyeOffsety), 0, 1),                tail:{
                     type:random([this.tailType, otherFish.tailType]),
                     innerxFactor: genOffspringNum(this.tail.innerxFactor, otherFish.tail.innerxFactor),
                     outerxFactor: genOffspringNum(this.tail.outerxFactor, otherFish.tail.outerxFactor),

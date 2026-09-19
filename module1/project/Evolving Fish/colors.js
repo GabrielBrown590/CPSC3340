@@ -32,7 +32,7 @@ function offspringColor(p1Color, p2Color)
     let retHue = (baseHue + random(-colorGeneticVariance, colorGeneticVariance) + 360) % 360;    
 
     //keep these fixed so the color stays looking good
-    let retSat = random(60, 85);
-    let retBri = random(75, 95);
+    let retSat = random(85, 100);
+    let retBri = random(90, 100);
     return color(retHue, retSat, retBri);
 }

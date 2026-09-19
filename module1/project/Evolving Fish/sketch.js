@@ -110,12 +110,37 @@
         
     }
 
-        
+    class Star
+    {
+        constructor() 
+        {
+        this.x = random(width);
+        this.y = random(height);
+        this.baseSize = random(1, 3);
+        this.twinklePhase = random(TWO_PI);
+        this.twinkleSpeed = random(0.02, 0.05);
+        }
 
+            display() 
+            {
+            let twinkle = (sin(frameCount * this.twinkleSpeed + this.twinklePhase) + 1) / 2; // 0 to 1
+            let brightness_ = map(twinkle, 0, 1, 40, 100);
+            let size = this.baseSize * map(twinkle, 0, 1, 0.7, 1.3);
+
+            noStroke();
+            drawingContext.shadowBlur = 4;
+            drawingContext.shadowColor = color(0, 0, 100);
+            fill(0, 0, brightness_);
+            circle(this.x, this.y, size);
+            drawingContext.shadowBlur = 0;
+            }
+    }
+        
+    var stars = [];
     function setup() {
         createCanvas(800, 600);
         rectMode(CENTER);
-        colorMode(HSB, 360, 100, 100);
+        colorMode(HSB, 360, 100, 100, 100);
         //setup color pallete
         colorPallete.push(color(15, 85, 100));   // coral red
         colorPallete.push(color(30, 90, 100));   // tangerine
@@ -128,6 +153,11 @@
         colorPallete.push(color(340, 50, 100));  // rose
         colorPallete.push(color(0, 0, 100));     // white
 
+        for (let i = 0; i < 80; i++) 
+        {
+        stars.push(new Star());
+        }
+
         for(let i = 0; i< 10; i++)
             {
                 fishArr[i] = generateNormalFish();
@@ -135,7 +165,12 @@
     }
 
     function draw() {
-        background(190, 45, 55);
+        background(260, 60, 6, 20);
+            for (let star of stars) 
+            {
+                star.display();
+            }
+
         checkBreeding();
         
         //get rid of any fish that are leaving and are off screen
