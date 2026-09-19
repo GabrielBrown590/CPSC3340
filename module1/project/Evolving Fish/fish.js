@@ -112,7 +112,7 @@ class Fish
             this.vy += random(-0.2,0.2)
 
             //cap speed
-            let speedLimit=5
+            let speedLimit=3
             if (this.vx > speedLimit) this.vx = speedLimit;
             if (this.vx < -speedLimit) this.vx = -speedLimit;
             if (this.vy > speedLimit) this.vy = speedLimit;

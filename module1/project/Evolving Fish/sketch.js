@@ -2,6 +2,7 @@
 
     var fishArr = [];
     var colorPallete = [];
+    var maxFish = 20;
 
     function checkBreeding()
     {
@@ -17,9 +18,10 @@
                 else
                     {
                         //otherwise check for possible collissions
-                        for(let j = 0; i < fishArr.length; i++)
+                        for(let j = 0; j < fishArr.length; j++)
                         {
                             if(
+                                i !== j && //fish cant breed with themselves
                                 fishArr[i].collidingWithOther(fishArr[j]) &&
                                 fishArr[j].framesUntilReady == 0
                             )
@@ -34,6 +36,12 @@
                         }
                     }
                 
+            }
+
+            //cap fish population
+            if(fishArr.length > maxFish)
+            {
+                fishArr.shift();
             }
     }
 
