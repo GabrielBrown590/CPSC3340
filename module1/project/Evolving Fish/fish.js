@@ -67,6 +67,10 @@ class Fish
             //save the tail factors for offspring reasons
             this.tail = options.tail;
 
+            //tail wiggle
+            this.tailWigglePhase = random(TWO_PI);
+            this.tailWiggleSpeed = random(0.15, 0.25);
+            this.tailWiggleAmount = 0.15; // how much the tail swings, as a fraction of spread
 
             //velocity
             this.vx = options.vx;
@@ -149,21 +153,27 @@ class Fish
             rotate(this.angle);
             translate(-this.x, -this.y);
 
-            //TODO color
-            fill(this.color)
-
-            //fish tail
             fill(this.color);
-            if (this.tailType == "w")
-                {
-                    //triangle with one point at inner x, and two at outer x. The outer points are at tailTopy and tailBoty
-                    triangle(this.tailInnerxOffset+this.x, this.y, this.tailOuterxOffset+this.x, this.tailTopyOffset+this.y, this.tailOuterxOffset+this.x, this.tailBotyOffset+this.y)
-                }
-            else if (this.tailType == "n")
-                {
-                    //triangle with one point at outer x and two at inner x. Outer point has y centered and the inner points are at tailTopy and tailBoty
-                    triangle(this.tailInnerxOffset+this.x, this.tailTopyOffset+this.y, this.tailInnerxOffset+this.x, this.tailBotyOffset+this.y, this.tailOuterxOffset+this.x, this.y)
-                }  
+
+            // compute wiggle offset for this frame
+            let speed = sqrt(this.vx * this.vx + this.vy * this.vy);
+            let wiggleStrength = map(speed, 0, 5, 0.3, 1.2); // slower fish = smaller swing, faster = bigger swing
+
+            let wiggle = sin(frameCount * this.tailWiggleSpeed + this.tailWigglePhase) * this.tailWiggleAmount * this.height * wiggleStrength;
+
+            if (this.tailType == "w") {
+                triangle(
+                    this.tailInnerxOffset + this.x, this.y,
+                    this.tailOuterxOffset + this.x, this.tailTopyOffset + this.y + wiggle,
+                    this.tailOuterxOffset + this.x, this.tailBotyOffset + this.y + wiggle
+                );
+            } else if (this.tailType == "n") {
+                    triangle(
+                        this.tailInnerxOffset + this.x, this.tailTopyOffset + this.y,
+                        this.tailInnerxOffset + this.x, this.tailBotyOffset + this.y,
+                        this.tailOuterxOffset + this.x, this.y + wiggle
+                    );
+            }  
 
             //fish body
             if(this.type == "r")

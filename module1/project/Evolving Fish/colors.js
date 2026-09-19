@@ -27,8 +27,10 @@ function averageHues(h1, h2)
 
 function offspringColor(p1Color, p2Color)
 {
-    let retHue = averageHues(hue(p1Color), hue(p2Color)) + colorGeneticVariance;
-    
+    //gets the average color and adds a little variance
+    let baseHue = averageHues(hue(p1Color), hue(p2Color));
+    let retHue = (baseHue + random(-colorGeneticVariance, colorGeneticVariance) + 360) % 360;    
+
     //keep these fixed so the color stays looking good
     let retSat = random(60, 85);
     let retBri = random(75, 95);
