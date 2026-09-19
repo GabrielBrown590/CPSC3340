@@ -188,10 +188,15 @@ class Fish
 
             
             //fish eye
-            fill("black")
-            circle(this.eyexOffset+this.x, this.eyeyOffset+this.y, this.eyeSize);
-
-            
+            fill("black");
+            circle(this.eyexOffset + this.x, this.eyeyOffset + this.y, this.eyeSize);
+            //draws an offset glimmer in the fish's eye
+            fill("white");
+            circle(
+                this.eyexOffset + this.x + this.eyeSize * 0.15,
+                this.eyeyOffset + this.y - this.eyeSize * 0.15,
+                this.eyeSize * 0.3
+            );            
 
             pop();
         }
