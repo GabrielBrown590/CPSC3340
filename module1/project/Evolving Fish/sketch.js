@@ -138,7 +138,7 @@
         
     var stars = [];
     function setup() {
-        createCanvas(800, 600);
+        createCanvas(windowWidth, windowHeight);
         rectMode(CENTER);
         colorMode(HSB, 360, 100, 100, 100);
         //setup color pallete
@@ -189,3 +189,6 @@
                 fishArr[i].display();
             }
     }
+    function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+}
