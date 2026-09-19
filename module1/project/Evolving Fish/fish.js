@@ -22,6 +22,9 @@ class Fish
             this.width = options.w
             this.height = options.h
 
+            //mark fish as not leaving
+            this.isLeaving = false;
+
             //caculate corner radii. CRadiusFactor is a value between 0 and 1 representing radius size relative to size of fish
             this.c1Radius=options.c1RadiusFactor * min(this.height, this.width);
             this.c2Radius=options.c2RadiusFactor * min(this.height, this.width);
@@ -122,21 +125,24 @@ class Fish
             this.x += this.vx;
             this.y += this.vy;
 
-            //Stay on screen and towards the center
-            if(this.x > width || this.x < 0) this.vx = this.vx * -1;
-            if(this.y > height || this.y < 0) this.vy = this.vy * -1;
-            let centerx = width/2;
-            let centery = height/2;
-            let pullStrength = 0.015;
-            this.vx += (centerx - this.x) * pullStrength * 0.01;
-            this.vy += (centery - this.y) * pullStrength * 0.01;
-
+            //Stay on screen and towards the center as long as fish isnt leaving
+            if(!this.isLeaving)
+            {
+                if(this.x > width || this.x < 0) this.vx = this.vx * -1;
+                if(this.y > height || this.y < 0) this.vy = this.vy * -1;
+                let centerx = width/2;
+                let centery = height/2;
+                let pullStrength = 0.015;
+                this.vx += (centerx - this.x) * pullStrength * 0.01;
+                this.vy += (centery - this.y) * pullStrength * 0.01;
+            }
             // face direction of travel(smoothly)
             let targetAngle = atan2(this.vy, this.vx); 
             this.angle = lerp(this.angle, atan2(this.vy, this.vx), 0.03); 
         }
         display()
         {
+            noStroke()
 
             push();
             translate(this.x, this.y);
@@ -198,4 +204,23 @@ class Fish
             return myLeft < otherRight && myRight > otherLeft &&
                 myTop < otherBottom && myBottom > otherTop;
         }
+        startLeaving() {
+        this.isLeaving = true;
+        // steer toward whichever edge is closest
+        let distLeft = this.x;
+        let distRight = width - this.x;
+        let distTop = this.y;
+        let distBottom = height - this.y;
+        let minDist = Math.min(distLeft, distRight, distTop, distBottom);
+
+        if (minDist === distLeft) { this.vx = -Math.abs(this.vx) - 1; }
+        else if (minDist === distRight) { this.vx = Math.abs(this.vx) + 1; }
+        else if (minDist === distTop) { this.vy = -Math.abs(this.vy) - 1; }
+        else { this.vy = Math.abs(this.vy) + 1; }
+    }
+
+    isOffScreen() {
+        return this.x < -this.width || this.x > width + this.width ||
+            this.y < -this.height || this.y > height + this.height;
+    }
     }

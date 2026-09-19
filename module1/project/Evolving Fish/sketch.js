@@ -39,9 +39,25 @@
             }
 
             //cap fish population
-            if(fishArr.length > maxFish)
+            
+            //find # of fish who arn't marked as leaving
+            let numOfFishStaying = 0;
+            for(let i = 0; i<fishArr.length; i++)
+                {
+                    if (!fishArr[i].isLeaving) numOfFishStaying++;
+                }
+
+            if(numOfFishStaying > maxFish)
             {
-                fishArr.shift();
+                //find oldest fish not marked as leaving
+                for(let i = 0; i < fishArr.length; i++)
+                    {
+                        if (!fishArr[i].isLeaving)
+                            {
+                                fishArr[i].startLeaving()
+                                break;
+                            }
+                    }
             }
     }
 
@@ -121,6 +137,17 @@
     function draw() {
         background(190, 45, 55);
         checkBreeding();
+        
+        //get rid of any fish that are leaving and are off screen
+        for(let i = 0; i < fishArr.length; i++)
+            {
+                if (fishArr[i].isOffScreen() && fishArr[i].isLeaving)
+                    {
+                        fishArr.splice(i,1);
+                        i--;
+                    }
+            }
+
         for(let i = 0; i< fishArr.length; i++)
             {
                 fishArr[i].move();
