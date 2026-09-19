@@ -153,6 +153,9 @@ class Fish
             rotate(this.angle);
             translate(-this.x, -this.y);
 
+            //neon fish
+            drawingContext.shadowBlur = 20;
+            drawingContext.shadowColor = this.color;
             fill(this.color);
 
             // compute wiggle offset for this frame
@@ -188,6 +191,7 @@ class Fish
 
             
             //fish eye
+            drawingContext.shadowBlur = 0; //turn off neon
             fill("black");
             circle(this.eyexOffset + this.x, this.eyeyOffset + this.y, this.eyeSize);
             //draws an offset glimmer in the fish's eye
