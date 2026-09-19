@@ -2,7 +2,10 @@
 
     var fishArr = [];
     var colorPallete = [];
-    var maxFish = 20;
+    var numFish = 0;
+    var maxFish = 0;
+    var pullStrength; //strength that pulls fish towards center of screen
+    var useComplexTailAnimation = true;
 
     function checkBreeding()
     {
@@ -139,6 +142,12 @@
     var stars = [];
     function setup() {
         createCanvas(windowWidth, windowHeight);
+
+        pullStrength = map(width, 600, 2000, 0.015, 0.0004, true); //calculate pullstrength based on width of screen
+        numFish = floor(map(width * height, 300000, 3000000, 2, 40, true));//calculate initial num of fish
+        maxFish = numFish * 2;
+        useComplexTailAnimation = (numFish < 25); //if there are too many fish disable complex tail animation to save cpu usage
+
         rectMode(CENTER);
         colorMode(HSB, 360, 100, 100, 100);
         //setup color pallete
@@ -153,12 +162,16 @@
         colorPallete.push(color(340, 50, 100));  // rose
         colorPallete.push(color(0, 0, 100));     // white
 
-        for (let i = 0; i < 80; i++) 
-        {
-        stars.push(new Star());
-        }
+        //generate stars if screen is big enough for them
+        if(width * height > 400000)
+            {
+                for (let i = 0; i < 80; i++) 
+                {
+                stars.push(new Star());
+                }
+            }
 
-        for(let i = 0; i< 10; i++)
+        for(let i = 0; i< numFish; i++)
             {
                 fishArr[i] = generateNormalFish();
             }

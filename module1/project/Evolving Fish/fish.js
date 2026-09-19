@@ -135,7 +135,6 @@ class Fish
                 if(this.y > height || this.y < 0) this.vy = this.vy * -1;
                 let centerx = width/2;
                 let centery = height/2;
-                let pullStrength = 0.015;
                 this.vx += (centerx - this.x) * pullStrength * 0.01;
                 this.vy += (centery - this.y) * pullStrength * 0.01;
             }
@@ -158,10 +157,18 @@ class Fish
             fill(this.color);
 
             // compute wiggle offset for this frame
-            let speed = sqrt(this.vx * this.vx + this.vy * this.vy);
-            let wiggleStrength = map(speed, 0, 5, 0.3, 1.2); // slower fish = smaller swing, faster = bigger swing
-
-            let wiggle = sin(frameCount * this.tailWiggleSpeed + this.tailWigglePhase) * this.tailWiggleAmount * this.height * wiggleStrength;
+            let wiggle;
+            if(useComplexTailAnimation)
+                {
+                    let speed = sqrt(this.vx * this.vx + this.vy * this.vy);
+                    let wiggleStrength = map(speed, 0, 5, 0.3, 1.2); // slower fish = smaller swing, faster = bigger swing
+                    wiggle = sin(frameCount * this.tailWiggleSpeed + this.tailWigglePhase) * this.tailWiggleAmount * this.height * wiggleStrength;
+                }
+            else
+                {
+                    wiggle = sin(frameCount * this.tailWiggleSpeed + this.tailWigglePhase) * this.tailWiggleAmount * this.height;
+                }
+            
 
             if (this.tailType == "w") {
                 triangle(
