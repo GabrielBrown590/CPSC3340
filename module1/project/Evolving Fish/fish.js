@@ -152,8 +152,12 @@ class Fish
             translate(-this.x, -this.y);
 
             //neon fish
-            drawingContext.shadowBlur = 20;
-            drawingContext.shadowColor = this.color;
+            if(useNeon)
+                {
+                    drawingContext.shadowBlur = 20;
+                    drawingContext.shadowColor = this.color;
+
+                }
             fill(this.color);
 
             // compute wiggle offset for this frame

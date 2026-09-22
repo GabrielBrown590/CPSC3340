@@ -147,6 +147,7 @@
         numFish = floor(map(width * height, 300000, 3000000, 2, 30, true));//calculate initial num of fish
         maxFish = numFish * 2;
         useComplexTailAnimation = (numFish < 25); //if there are too many fish disable complex tail animation to save cpu usage
+        useNeon = (numFish < 30) //if we're bigger than 300,000 pixels disable neon to help pi survive
 
         rectMode(CENTER);
         colorMode(HSB, 360, 100, 100, 100);
