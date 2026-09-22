@@ -1,0 +1,2 @@
+sleep 5
+chromium --kiosk --incognito --noerrdialogs --disable-infobars /home/stu3340/CPSC3340/module1/project/Evolving\ Fish/index.html&
