@@ -1,0 +1,841 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Portfolio project 1</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+/* Override strong tags inside headings to maintain consistent weight */
+h1 strong,
+h2 strong,
+h3 strong {
+	font-weight: 600;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 10px;
+	padding: 1rem;
+}
+
+/* For default-background callouts, render the border outline. */
+.callout.block-color-default_background {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+/*
+ * Toggles and callouts hold arbitrary content, so they can easily be taller
+ * than a page. They must stay breakable: avoiding breaks inside them makes
+ * Chromium push the whole block onto the next page, which leaves the previous
+ * page mostly empty before every long toggle.
+ */
+details,
+aside {
+	margin: 1.25em 0;
+}
+
+/* Keep a toggle's title on the same page as the start of its content. */
+summary {
+	page-break-after: avoid;
+	break-after: avoid;
+}
+
+/*
+ * Toggle headings render as <h1/h2/h3 style="display:inline-block"> inside
+ * <summary>. Without this reset, the heading's margin-top pushes it below the
+ * ::marker (▼), so the triangle and the title appear on separate lines.
+ */
+summary h1,
+summary h2,
+summary h3,
+summary h4 {
+	margin-top: 0;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+
+	table.collection-content {
+		width: 100%;
+		table-layout: fixed;
+	}
+
+	table.collection-content th,
+	table.collection-content td {
+		overflow-wrap: anywhere;
+	}
+
+	table.collection-content td > .user,
+	table.collection-content td > time {
+		white-space: pre-wrap;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content-wrapper {
+	overflow-x: auto;
+}
+
+@media only print {
+	.collection-content-wrapper {
+		overflow-x: visible;
+	}
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.collection-content td {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.column-list {
+	display: flex;
+	gap: 46px;
+}
+
+.column {
+	min-width: 0;
+	overflow: hidden;
+}
+
+.column > *:first-child {
+	margin-top: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding-inline: 0.125rem;
+	padding-block: 0.375rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+table {
+	border-collapse: collapse;
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol.numbered-list.numbered-list-digits-2 {
+	padding-inline-start: 2em;
+}
+
+ol.numbered-list.numbered-list-digits-3plus {
+	padding-inline-start: 2.4em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+/*
+ * Render emoji icons using a ::before pseudo-element to keep the glyph
+ * out of the DOM textContent traversal. This avoids double-rendering icons
+ * in callouts and page titles.
+ * NOTE(slim/html-export-pseudo-icons): I can't tagref this because it will
+ * flag as a duplicate tag after codegen.
+ */
+.icon[data-emoji]::before {
+	content: attr(data-emoji);
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.callout img.notion-static-icon {
+	width: 1em;
+	height: 1em;
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout h1,
+.callout h2,
+.callout h3 {
+	margin: 0 0 0.6rem;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	margin-right: 0.4em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+blockquote.quote-large {
+	font-size: 1.25em;
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.tab {
+	margin: 1.25em 0;
+	padding-inline: 1rem;
+	border: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", "Noto Sans Arabic", "Noto Sans Hebrew", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.highlight-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.highlight-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.highlight-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.highlight-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.highlight-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.highlight-default_background {
+	color: rgba(44, 44, 43, 1);
+}
+.highlight-gray_background {
+	background: rgba(42, 28, 0, 0.07);
+}
+.highlight-brown_background {
+	background: rgba(139, 46, 0, 0.086);
+}
+.highlight-orange_background {
+	background: rgba(224, 101, 1, 0.129);
+}
+.highlight-yellow_background {
+	background: rgba(211, 168, 0, 0.137);
+}
+.highlight-teal_background {
+	background: rgba(0, 100, 45, 0.09);
+}
+.highlight-blue_background {
+	background: rgba(0, 124, 215, 0.094);
+}
+.highlight-purple_background {
+	background: rgba(102, 0, 178, 0.078);
+}
+.highlight-pink_background {
+	background: rgba(197, 0, 93, 0.086);
+}
+.highlight-red_background {
+	background: rgba(223, 22, 0, 0.094);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(125, 122, 117, 1);
+	fill: rgba(125, 122, 117, 1);
+}
+.block-color-brown {
+	color: rgba(159, 118, 90, 1);
+	fill: rgba(159, 118, 90, 1);
+}
+.block-color-orange {
+	color: rgba(210, 123, 45, 1);
+	fill: rgba(210, 123, 45, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 148, 52, 1);
+	fill: rgba(203, 148, 52, 1);
+}
+.block-color-teal {
+	color: rgba(80, 148, 110, 1);
+	fill: rgba(80, 148, 110, 1);
+}
+.block-color-blue {
+	color: rgba(56, 125, 201, 1);
+	fill: rgba(56, 125, 201, 1);
+}
+.block-color-purple {
+	color: rgba(154, 107, 180, 1);
+	fill: rgba(154, 107, 180, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(207, 81, 72, 1);
+	fill: rgba(207, 81, 72, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(240, 239, 237, 1);
+}
+.block-color-brown_background {
+	background: rgba(245, 237, 233, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 235, 222, 1);
+}
+.block-color-yellow_background {
+	background: rgba(249, 243, 220, 1);
+}
+.block-color-teal_background {
+	background: rgba(232, 241, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(229, 242, 252, 1);
+}
+.block-color-purple_background {
+	background: rgba(243, 235, 249, 1);
+}
+.block-color-pink_background {
+	background: rgba(250, 233, 241, 1);
+}
+.block-color-red_background {
+	background: rgba(252, 233, 231, 1);
+}
+.select-value-color-default { background-color: rgba(42, 28, 0, 0.07); }
+.select-value-color-gray { background-color: rgba(28, 19, 1, 0.11); }
+.select-value-color-brown { background-color: rgba(127, 51, 0, 0.156); }
+.select-value-color-orange { background-color: rgba(196, 88, 0, 0.203); }
+.select-value-color-yellow { background-color: rgba(209, 156, 0, 0.282); }
+.select-value-color-green { background-color: rgba(0, 96, 38, 0.156); }
+.select-value-color-blue { background-color: rgba(0, 118, 217, 0.203); }
+.select-value-color-purple { background-color: rgba(92, 0, 163, 0.141); }
+.select-value-color-pink { background-color: rgba(183, 0, 78, 0.152); }
+.select-value-color-red { background-color: rgba(206, 24, 0, 0.164); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style><style>@import url('https://cdn.jsdelivr.net/npm/katex@0.16.25/dist/katex-swap.min.css')</style></head><body><article id="3e454524-970f-8086-a017-c6097ac607f6" class="page sans"><header><h1 class="page-title" dir="auto">Portfolio project 1</h1><p class="page-description" dir="auto"></p></header><div class="page-body"><p id="3e454524-970f-807d-bd31-fafde21ccd47" class="" dir="auto">For this project my initial vision was of a fishbowl filled with various kinds of fish each with their own unique genes. These fish would then reproduce making new and interesting fish over time.</p><p id="3e454524-970f-808c-a522-f4563f970269" class="" dir="auto">
+</p><p id="3e454524-970f-8062-a498-d61ea2833d3b" class="" dir="auto">Based on this initial vision I chose to create in p5.js. I felt like it had all the tools necessary for this project, allowed me to use Javascript which is a language I am comfortable in and allowed me to use a browser to handle the actual application.</p><h3 id="3e454524-970f-80f9-9453-f7a53fd70d24" class="" dir="auto">Creating Random Fish</h3><p id="3e454524-970f-8027-8c93-f42a09d55a7d" class="" dir="auto">My initial step was just creating one fish. While this sounds simple it actually was arguably the most creative step in my project as it was the step where I had to choose which of my fish characteristics could vary and which ones would be constant. As part of this I also chose the characteristics for the fishes’ eyes and tails. After this I added some randomization in order to be able to generate a random fish. Below is the options object passed to the constructor to generate a ”normal” fish, that being a fish that can exist at the beginning of my program</p><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js" integrity="sha512-m3JYEI6gx5fh9jF10FjGoMzVKcV2N6nchcDcqPCdI1L3R2WQV7br2XVNR8iTLb2daOMRl3zldbcfT40xU2ntVw==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><pre id="3e454524-970f-80e0-af57-e7f38f3ed482" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">let normalOptions = 
+            {
+                type: random([&quot;r&quot;, &quot;e&quot;]),
+                x: random(w, width-w), y: random(h, height-h),
+                w: w, h: h,
+                c1RadiusFactor: random(0, 0.5), c2RadiusFactor: random(0, 0.5), c3RadiusFactor: random(0, 0.5), c4RadiusFactor: random(0, 0.5),
+                eyeSizeFactor: random(0.1, 0.3),
+                eyeOffsetx: random(0.65, 0.9), eyeOffsety: random(0.35, 0.65),
+                tail:{
+                    type:random([&quot;w&quot;,&quot;n&quot;]),
+                    innerxFactor: random(0.3, 0.7),
+                    outerxFactor: random(0.2, 0.6),
+                    spreadFactor: random(0.4, 1.0)
+                },
+                vx:random(-3, 3), vy:random(-3,3),
+                color: random(colorPallete)
+            }</code></pre><p id="3e454524-970f-800e-9d2c-f9f27fd095c8" class="" dir="auto">Type determines whether a fish is r(ectangular) or e(lliptical), that being whether the body is a rectangle or ellipse that is then modified. The x and y are just position and w and h are width and height of the fish.</p><p id="3e454524-970f-80fa-8187-da651b334a11" class="" dir="auto">The c1, c2, c3, and c4 radii factors determine whether that corner of the fish is rounded or sharp if the fish is rectangular. If it is elliptical these variables are ignored. The eye size factor determines the size of the eye and the eye Offsets determines where the fish’s eye gets placed.</p><p id="3e454524-970f-80b0-8078-f12e0e7be676" class="" dir="auto">For the tail I chose two different possible types, wide and narrow. All tails are triangles and a wide tail is one where the two points of the triangle point outward, giving the appearance of a wide tail. A narrow tail is one where the two points of the triangle are hidden behind the fish body, giving the appearance of a narrow tail.  The x factors are how far into and out of the fish these points of the triangle are and the spreadfactor determins how far apart the two points of the triangle that are on the same side are.</p><p id="3e454524-970f-8035-af6f-e71e5ace83e2" class="" dir="auto">vx and vy are velocity and for color I initially just had a pallete that would be selected from randomly that included a group of tropical enough colors.</p><h3 id="3e454524-970f-8037-9e02-cf8819d7b301" class="" dir="auto">Movement</h3><p id="3e454524-970f-8059-b798-f28804fc3b52" class="" dir="auto">After I could consistently generate random fish that looked somewhat aesthetically appealing to me I then decided to work on fish movement. Initially this was as simple as just changing the position of the fish by it’s velocity every frame and randomly changing the velocity a little to make sure it doesn’t keep moving in the same direction forever however this had some issues.</p><p id="3e454524-970f-80ee-b6d6-dba4ad683b37" class="" dir="auto">For one, fish were all always facing the same direction. To fix this however all I had to do was angle the fish in the direction of its movement (as determined by the arctangent of it’s 2 velocity vectors), however this gave jerky turns and so using the lerp function I slowly guided the fish in the direction of its movement rather than just jumping in the direction of its movement. Next I capped the speed of fish to make sure they weren’t going too fast.</p><p id="3e454524-970f-80e7-9e20-dcc9a780d666" class="" dir="auto">I then noticed that fish had a tendency to fly to the edges and stay there and so I added a counteracting force to push fish together towards the center.</p><pre id="3e454524-970f-8070-b7e1-e2cbc1fba258" class="code code-wrap" data-notion-code-syntax="jsx"><code class="language-jsx" style="white-space:pre-wrap;word-break:break-all">move()
+        {
+            //change velocity randomly
+            this.vx += random(-0.2,0.2)
+            this.vy += random(-0.2,0.2)
+
+            //cap speed
+            let speedLimit=3
+            if (this.vx &gt; speedLimit) this.vx = speedLimit;
+            if (this.vx &lt; -speedLimit) this.vx = -speedLimit;
+            if (this.vy &gt; speedLimit) this.vy = speedLimit;
+            if (this.vy &lt; -speedLimit) this.vy = -speedLimit;
+
+            //change position based on velocity
+            this.x += this.vx;
+            this.y += this.vy;
+
+            //Stay on screen and towards the center as long as fish isnt leaving
+            if(!this.isLeaving)
+            {
+                if(this.x &gt; width || this.x &lt; 0) this.vx = this.vx * -1;
+                if(this.y &gt; height || this.y &lt; 0) this.vy = this.vy * -1;
+                let centerx = width/2;
+                let centery = height/2;
+                this.vx += (centerx - this.x) * pullStrength * 0.01;
+                this.vy += (centery - this.y) * pullStrength * 0.01;
+            }
+            // face direction of travel(smoothly)
+            let targetAngle = atan2(this.vy, this.vx); 
+            this.angle = lerp(this.angle, atan2(this.vy, this.vx), 0.03); 
+        }</code></pre><p id="3e454524-970f-80ba-99c2-e4a4fb053edf" class="" dir="auto">I then chose to move onto reproduction</p><h3 id="3e454524-970f-8049-bc8a-c7e1039feb12" class="" dir="auto">Reproduction</h3><p id="3e454524-970f-8049-99f1-c73f27f71012" class="" dir="auto">My first issue with fish reproduction was that I wanted the fish to reproduce when colliding and I currently had no way detect if fish were colliding. This was easily enough solved however with a simple distance check between fish. While it was not perfectly accurate it was accurate enough to decieve the viewer.</p><p id="3e454524-970f-80a9-8fa2-e32912a6ba9f" class="" dir="auto">Next I wrote the actual reproduction function which was simple enough, it was just using my already existing Fish constructor with new values.</p><p id="3e454524-970f-8043-be11-ffd5aae5981d" class="" dir="auto">The values I decided on were randomly set between the two parent fishes’ values for the same field, plus a little bit of randomness that would allow it to fall slighly outside the values of it’s parents. This was done to slow down the issue of my fishtank becoming full of exactly one type of fish which is what happens if left too long.</p><p id="3e454524-970f-80de-9037-fbad9fe9d623" class="" dir="auto">This worked very well for every method other than color, probably my most interesting feature.</p><h3 id="3e454524-970f-80c1-b916-f45d0c742f21" class="" dir="auto">Color</h3><p id="3e454524-970f-8088-bab3-e89042779a27" class="" dir="auto">For color I had to do something different than the other reproduction fields. This is because by randomly setting a color between two other values and doing nothing else you end up with an ugly brownish color eventually. However I was graced by a blog post:<a href="https://sighack.com/post/procedural-color-algorithms-color-variations">https://sighack.com/post/procedural-color-algorithms-color-variations</a> that talked about how you could randomize colors while keeping them looking good.</p><p id="3e454524-970f-8039-bee5-f534b230f57c" class="" dir="auto">The answer is to use HSB color wheel colors instead of RGB. By doing this you can find the mid point between 2 hues on a color wheel instead of the average of the red, green and blues of a fish. Since I wanted visually appealing and interesting fish this was a life saver. </p><p id="3e454524-970f-8005-811a-f5100330a37c" class="" dir="auto">After implementing this I could randomly mix two colors uses HSB mixing and end up with a good looking final color by keeping the saturation and brightness high and only changing the hue. However everything in my tank was still looking bland which is when I decided my fish needed to ascend.</p><h3 id="3e454524-970f-8063-ab9e-f426db55ef4a" class="" dir="auto">Bringing the Fish to Space (and the 80s)</h3><p id="3e454524-970f-80aa-b252-c0a89035328b" class="" dir="auto">I was unhappy with how my tank was looking, it was bland and nothing was popping out to me which is when I got the idea to lean into a neon, space aesthetic. I found an effect in p5.js called shadowblur which allowed me to generate this neon-like effect and by drawing over the canvas with a lower opacity I created the illusion of the fish having a trail. </p><p id="3e454524-970f-805c-a792-deed9c1ae5f7" class="" dir="auto">I further leaned into this by changing the colors to hyper bright colors and making the background black. I would later also add stars to the background.</p><p id="3e454524-970f-80b9-b873-f29255ade4a6" class="" dir="auto">This lined up more with a visually interesting aesthetic that I was aiming for and so I was very happy with the results produced by this change. I ended up keeping it for my final project</p><h3 id="3e454524-970f-8057-ab02-c32665050348" class="" dir="auto">Final changes and putting it on the Pi</h3><p id="3e454524-970f-8031-a855-d145a8658a40" class="" dir="auto">I then made some final changes to my project to make it conform to the standards required by the assignment and realistic to put on a Pi.</p><p id="3e454524-970f-808a-98b4-e34f113acc54" class="" dir="auto">For one I made the stars an optional feature that turn off to reduce clutter when the screen is too small. Secondly I turned off the tail animations (a feature I did not bring up in this blog but something I added with movement) and the neon affect if there are too many fish. This was because when I initially tried booting it on the Pi it was severly laggy if too big and so by disabling these features I could save some computational power and stop some of the lag. I also limited the amount of fish for the same reason.</p><p id="3e454524-970f-8063-9e61-c2de032760ff" class="" dir="auto">One more feature I implemented was having fish leave when a fish was born that put us over the population cap. I believe this created a natural feeling instead of having fish disappear or having births stop after a certain point. This I implemented using an array that kept fish from oldest to newest and pulling the oldest fish towards the edge when we went over the population barrier.</p><p id="3e454524-970f-809c-8617-db56bf45ffcd" class="" dir="auto">Once on the Pi and running successfully I simply had to make it auto-boot on startup. To do this I researched and implement an autostart file. This is a file that goes in ~/.config/labwc directory and is automatically run on startup. Because my project was a p5.js project, all I had to do was run the index.html file on startup in chromium and I could get it to boot on startup. Then it was simply a matter of adding some flags, mainly —kiosk, in order to get fullscreen and get rid of all the other things chromium sometimes wanted to show on the screen.</p><h3 id="3e454524-970f-80e8-a238-ed896934cb36" class="" dir="auto">Any Potential Space and Artistic Vision</h3><p id="3e454524-970f-8070-b06f-fde16d18af1b" class="" dir="auto">I previously stated this but am reiterating for clarity’s sake. Making this project run in any potential space was not easy. Initially it would have been, but this conflicted with my artistic vision and so I had to make tradeoffs.</p><p id="3e454524-970f-80f0-91ff-c98a7e49de09" class="" dir="auto">My initial Artistic Vision was a regular fishbowl with regular, easy to render fish. Adding the neon effect was a later addition to my vision that made my program much more computationally intensive but look much better in my opinion. To handle this I disabled the neon effect and the dynamic tail waggling when there were too many fish. I also capped the amount of fish. All of these I did using screen size and a conditional (in accordance with the project specifications). This was a tradeoff I was willing to make in order to make my program run well. I was not willing to compromise on my reproduction logic which has always been the core of the project and what I consider the real art to be, the creation of new visually interesting fishes over time as well as the genetics of the fishbowl overall and how it changes over time.</p><h3 id="3e454524-970f-8017-afb0-e3d277f974e3" class="" dir="auto">video</h3><p id="3e454524-970f-8034-9de3-c5b3bfa16422" class="" dir="auto"><a href="https://youtu.be/UEdl5F6Hpaw">https://youtu.be/UEdl5F6Hpaw</a></p><p id="3e454524-970f-80b7-9960-e87101741920" class="" dir="auto">Excuse the artifacts, online platforms don’t like the neon glowing effect.</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
