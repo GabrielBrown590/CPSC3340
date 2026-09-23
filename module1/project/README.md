@@ -23,3 +23,11 @@ Of notable interest in my project is my implementaion of HSB color in order to g
 To run simply run the index.html file.
 
 To run automatically: install the files in piFiles to your home directory, this includes an autostart file which will be automatically run by a raspberry Pi on boot. Then copy Evolving Fish folder into your home directory and change the autostart file to point at the new location of index.html
+
+Meeting submission requirements:
+This project runs automatically on start. It further uses conditionals to activate certain features (advanced fish tail waggling and stars) based on whether the screen is big enough/too big to handle them. It also varies the amount of fish based on screen size to keep the Pi from overloading while also keeping the screen occupied.
+
+Link to video demo:https://www.youtube.com/watch?v=UEdl5F6Hpaw
+link to blogpost going into more detail:https://app.notion.com/p/Portfolio-project-1-3e454524970f8086a017c6097ac607f6?source=copy_link
+
+Blog can also be found in documentation folder
