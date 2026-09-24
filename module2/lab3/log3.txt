@@ -1,0 +1,20 @@
+09/24 Lab 3 Log
+
+Notes:
+
+- Could not find datasheet for analog joystick
+- Connected switch and button to protoboard in the following way: {insert image}
+- Created lab3.py
+    - If you want to connect to pin 17, use Device(17) (like Button(17))
+    - We used Button(17) for button and Button(22) for switch 
+    - Tested 4 states with just button and switch
+    - Connected 17 to 6th one down and 22 to 7th one down
+    - 4 states work.
+    - To test joystick:
+        - We are trying to set the joyx as a button
+        - Trying 3.3v as power and connecting pin 22 to joyX which is the middle pin in the joystick
+        - Connecting ground from breadboard to joystick which is the top pin
+        - Connecting power from breadboard (anything along red line) to the joystick pin.
+        - It worked by setting joyX as a button (we got 5 states).
+        - Anytime the joystick was to the right of center, it counted as being pressed.
+
