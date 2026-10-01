@@ -1,0 +1,12 @@
+-first we setup our Arduino IDE. This involved installing the esp32 plugin. this was under tools->boards->board manager we found esp32espressif and installed that
+-We then plugged in our ESP32 to our computer and in the IDE selected esp32-s3 dev module
+-We then copied the code into the IDE and verified it before uploading it to the esp32
+-We used the piserial library to read the data from the esp32 and print it to the screen
+	-we had to import the serial library
+	-than we created a serial object with the baud rate of the esp32 115200 and mounted it
+	-lastly we could just read the data using data.read()
+-We struggled with the uploading taking a long time on the esp32 so before we could test this we started building out circuit
+-We connected the two breadboards to make 1 large breadboard
+-The switch 
+-we had to switch computers to get around te hanging during upload, the 2nd computer worked perfectly.
+-We uploaded the test code and then to read it all we had to do was create a serial port and use serial.readline().decode("ascii")

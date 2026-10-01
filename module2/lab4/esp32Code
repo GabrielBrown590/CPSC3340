@@ -1,0 +1,18 @@
+const int buttonPin = 32;
+const int switchPin = 33;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(buttonPin, INPUT_PULLUP);  // pin reads HIGH until the button pulls it to GND
+  pinMode(switchPin, INPUT_PULLUP);
+}
+
+void loop() {
+  bool buttonPressed = digitalRead(buttonPin) == LOW;
+  bool switchOn      = digitalRead(switchPin) == LOW;
+
+  Serial.println(buttonPressed ? "Button Pressed!" : "Button not Pressed!");
+  Serial.println(switchOn ? "Switch On!" : "Switch Off!");
+
+  delay(1000);
+}
