@@ -11,7 +11,7 @@ from PIL import ImageFont
 
 #setup play and timer OLED
 oled = ssd1306(i2c(port=1, address=0x3C))
-timer = ssd1306(i2c(port=1, address=0x3C))
+timer = ssd1306(i2c(port=1, address=0x3D))
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
 
 
@@ -64,6 +64,15 @@ def setLED(name):
 
 def show_oled(text):
     with canvas(oled) as draw:
+        draw.text((0, 0), text, font=BIG, fill="white")
+
+timer_text = None
+def show_timer(text):
+    global timer_text
+    if text == timer_text:      # already showing this, nothing to do
+        return
+    timer_text = text
+    with canvas(timer) as draw:
         draw.text((0, 0), text, font=BIG, fill="white")
 
 
@@ -232,6 +241,7 @@ def show_module(i):
 
 # main game
 strikes = 0
+strike_until = 0
 current = 0
 last_announce = None
 last = read_inputs()
@@ -245,28 +255,34 @@ try:
 
         # timer
         remaining = time_left()
+        if time.time() < strike_until:
+            show_timer("X" * strikes)
+        else:
+            show_timer(f"{remaining // 60}:{remaining % 60:02d}")
+
         if remaining <= 0:
-            print("\n*** BOOM! Time ran out. ***")
+            show_timer("BOOM!")
+            time.sleep(3)
             break
-        if remaining % 10 == 0 and remaining != last_announce:
-            print(f"  [{remaining // 60}:{remaining % 60:02d} left | strikes {strikes}/{MAX_STRIKES}]")
-            last_announce = remaining
 
         # current module decides what the inputs mean
         result = MODULES[current][3](puzzles[current], now, last)
 
         if result == "strike":
             strikes += 1
-            print(f"  STRIKE {strikes}/{MAX_STRIKES}!")
+            show_timer("X"*strikes)
+            strike_until = time.time() + 2
             if strikes >= MAX_STRIKES:
-                print("\n*** BOOM! Too many strikes. ***")
+                show_timer("BOOM!")
+                time.sleep(3)
                 break
         elif result == "solved":
             solved[current] = True
             current+=1
             print("  Module solved!")
             if all(solved):
-                print("\n*** BOMB DEFUSED! You win! ***")
+                show_timer("you WIN!")
+                time.sleep(3)
                 break
             show_module(current)
 
