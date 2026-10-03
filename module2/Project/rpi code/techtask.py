@@ -3,6 +3,17 @@ from signal import pause
 from RPi import GPIO
 import random
 import time
+#TODO make sure we install this stuff
+from luma.core.interface.serial import i2c
+from luma.core.render import canvas
+from luma.oled.device import ssd1306
+from PIL import ImageFont
+
+#setup play and timer OLED
+oled = ssd1306(i2c(port=1, address=0x3C))
+timer = ssd1306(i2c(port=1, address=0x3C))
+BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
+
 
 GPIO.setmode(GPIO.BCM)
 
@@ -16,8 +27,14 @@ GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 RED_BUTTON = 0
 GREEN_BUTTON = 0
 BLUE_BUTTON = 0
-YELLOW_BUTTON= 0
+YELLOW_BUTTON = 0
 for pin in (RED_BUTTON, GREEN_BUTTON, BLUE_BUTTON, YELLOW_BUTTON):
+    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
+#TODO fill in with switch pin info
+SWITCH1 = 0
+SWITCH2 = 0
+for pin in (SWITCH1, SWITCH2):
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #TODO fill in with led pin info
@@ -26,6 +43,8 @@ GREEN_PIN = 0
 BLUE_PIN = 0
 for pin in (RED_PIN,GREEN_PIN,BLUE_PIN):
     GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
+
+
 
 
 def setLED(name):
@@ -43,6 +62,11 @@ def setLED(name):
     GPIO.output(BLUE_PIN, b)
 
 
+def show_oled(text):
+    with canvas(oled) as draw:
+        draw.text((0, 0), text, font=BIG, fill="white")
+
+
     
 def read_inputs():
         return {
@@ -50,7 +74,8 @@ def read_inputs():
             "red_button": GPIO.input(RED_BUTTON),
             "green_button": GPIO.input(GREEN_BUTTON),
             "yellow_button": GPIO.input(YELLOW_BUTTON),
-            "switch": GPIO.input(27),
+            "switch1": GPIO.input(SWITCH1),
+            "switch2": GPIO.input(SWITCH2),
             "x": 1-GPIO.input(23),
             "y": 1-GPIO.input(24),
             "joySW": 1 - GPIO.input(22)
@@ -106,7 +131,7 @@ def button_setup():
 
     fact, if_true, if_false = BUTTON_RULES[LED_color]
     order = if_true if fact else if_false
-    return {"order": order, "step": 0, "clue": f"Serial number: {SERIAL}"}
+    return {"order": order, "step": 0, "clue": f"Serial number: {SERIAL}","led": LED_color, "oled": SERIAL,}
 
 def button_check(p, now, last):
     for button in  ["red_button", "green_button", "blue_button", "yellow_button"]:
@@ -120,101 +145,78 @@ def button_check(p, now, last):
                 if p['step'] == len(p["order"]):
                     setLED("OFF")
                     return "solved"
-                
-    
-    # if pressed("button", now, last):
-    #     p["presses"] += 1
-    #     print(" *click*")
-    # if pressed("x", now, last):
-    #     if p["presses"] == BUTTON_RULES[p["color"]]:
-    #         return "solved"
-    #     p["presses"] = 0
-    #     return "strike"
-    # return None
 
-# symbols game
-# symbol sequence dictates order of presses
-SYMBOL_RULES = {"STAR": "x", "MOON": "y", "SUN": "button", "SKULL": "y"}
+# Hold game
+# player holds a button, LED changes based on that they release it at a certain time and with certain switch positions
+def hold_setup():
+    words = ["OH", "O", "OWE", "BY", "BYE", "BUY"]
+    first_LED_colors = ["RED", "BLUE"]
+    second_LED_colors = ["GREEN", "YELLOW"]
+    hold_rules = {
+    # (word, first LED, second LED): (button to hold, switch1, switch2, time digit)
+    ("OH",  "RED",  "GREEN"):  ("blue_button",   True,  True,  5),
+    ("OH",  "RED",  "YELLOW"): ("blue_button",   False, True,  2),
+    ("OH",  "BLUE", "GREEN"):  ("yellow_button", True,  False, 8),
+    ("OH",  "BLUE", "YELLOW"): ("yellow_button", False, False, 1),
 
-def symbols_setup():
-    seq = random.sample(list(SYMBOL_RULES), 3)
-    return {"seq": seq, "step": 0, "clue": "Symbols: " + "  ".join(seq)}
+    ("O",   "RED",  "GREEN"):  ("green_button",  False, False, 3),
+    ("O",   "RED",  "YELLOW"): ("green_button",  True,  False, 7),
+    ("O",   "BLUE", "GREEN"):  ("red_button",    False, True,  0),
+    ("O",   "BLUE", "YELLOW"): ("red_button",    True,  True,  4),
 
-def symbols_check(p, now, last):
-    for action in ["x", "y", "button"]:
-        if pressed(action, now, last):
-            if action != SYMBOL_RULES[p["seq"][p["step"]]]:
-                p["step"] = 0
+    ("OWE", "RED",  "GREEN"):  ("yellow_button", True,  False, 9),
+    ("OWE", "RED",  "YELLOW"): ("yellow_button", True,  True,  6),
+    ("OWE", "BLUE", "GREEN"):  ("green_button",  False, False, 4),
+    ("OWE", "BLUE", "YELLOW"): ("green_button",  False, True,  7),
+
+    ("BY",  "RED",  "GREEN"):  ("red_button",    False, True,  1),
+    ("BY",  "RED",  "YELLOW"): ("red_button",    False, False, 8),
+    ("BY",  "BLUE", "GREEN"):  ("blue_button",   True,  True,  3),
+    ("BY",  "BLUE", "YELLOW"): ("blue_button",   True,  False, 0),
+
+    ("BYE", "RED",  "GREEN"):  ("green_button",  True,  True,  2),
+    ("BYE", "RED",  "YELLOW"): ("green_button",  True,  False, 5),
+    ("BYE", "BLUE", "GREEN"):  ("yellow_button", False, True,  6),
+    ("BYE", "BLUE", "YELLOW"): ("yellow_button", False, False, 9),
+
+    ("BUY", "RED",  "GREEN"):  ("blue_button",   False, False, 7),
+    ("BUY", "RED",  "YELLOW"): ("blue_button",   False, True,  3),
+    ("BUY", "BLUE", "GREEN"):  ("red_button",    True,  False, 1),
+    ("BUY", "BLUE", "YELLOW"): ("red_button",    True,  True,  8),
+    }
+    word = random.choice(words)
+    first = random.choice(first_LED_colors)
+    second = random.choice(second_LED_colors)
+    button, switch1, switch2, digit = hold_rules[(word, first, second)]
+    return {"button": button, "second": second,
+            "switch1": switch1, "switch2": switch2, "digit": digit,
+            "holding": False, "led": first, "oled": word,
+            "clue": "Read the display."}
+
+def hold_check(p, now, last):
+    for action in ["red_button", "blue_button", "green_button", "yellow_button"]:
+        if pressed(action, now, last):            
+            if action != p["button"]:
                 return "strike"
-            p["step"] += 1
-            print(f" step {p['step']} correct")
-            if p["step"] == len(p["seq"]):
-                return "solved"
-    return None
+            p["holding"] = True
+            setLED(p["second"])
 
-# serial game
-# if vowel in serial number, set switch to 1, else 0
-# use button to submit
-def switch_setup():
-    print("nothing RN")
-
-def switch_answer(serial):
-    if any(ch in "AEIOU" for ch in serial):
-        return 1 # if has vowel, return 1
-    return 0 # else 0
-
-def switch_check(p, now, last):
-    if pressed("button", now, last):
-        if now["switch"] == switch_answer(p["serial"]):
+    # did they let go of the right button?
+    if p["holding"] and last[p["button"]] == 1 and now[p["button"]] == 0:
+        p["holding"] = False
+        if (now["switch1"] == p["switch1"]
+                and now["switch2"] == p["switch2"]
+                and time_left() % 10 == p["digit"]):
+            setLED("OFF")
             return "solved"
-        return "strike"
-    return None
-
-# timing game
-# code dictates what the last digit of the time needs to be when you submit
-TIMING_RULES = {"ALPHA": 2, "BRAVO": 7, "CHARLIE": 9, "DELTA": 5}
-
-def timing_setup():
-    word = random.choice(list(TIMING_RULES))
-    return {"word": word, "clue": f"The display reads: {word}."}
-
-def timing_check(p, now, last):
-    if pressed("button", now, last):
-        t = time_left()
-        print(f" Clock: {t // 60}:{t % 60:02d}")
-    if pressed("switch", now, last):
-        if time_left() % 10 == TIMING_RULES[p["word"]]:
-            return "solved"
-        return "strike"
-    return None
-
-# dial game? workshop the name
-# codes dictate what dial needs to be set at
-# use x and y to set dial, 0 loops to 9
-DIAL_RULES = {"SHELL": 3, "HALL": 8, "STICKS": 1, "TRAIN": 9, "BOX": 6}
-
-def dial_setup():
-    word = random.choice(list(DIAL_RULES))
-    return {"word": word, "value": 0, "clue": f"The display reads: {word}."}
-
-def dial_check(p, now, last):
-    if pressed("x", now, last):
-        p["value"] = (p["value"] + 1) % 10
-    if pressed("y", now, last):
-        p["value"] = (p["value"] - 1) % 10
-    if pressed("button", now, last):
-        if p["value"] == DIAL_RULES[p["word"]]:
-            return "solved"
+        setLED(p["led"])                          
         return "strike"
     return None
 
 # setup the game
 MODULES = [
     ("The Button", "Button: press   X: submit", button_setup, button_check),
-    ("The Switch", "Switch: set   Button: submit", switch_setup, switch_check),
-    ("Symbols", "X / Y / Button: one action per symbol", symbols_setup, symbols_check),
-    ("Timing", "Button: check clock   Switch ON: act", timing_setup, timing_check),
-    ("The Dial", "X: up   Y: down   Button: submit", dial_setup, dial_check),
+    ("Hold", "X / Y / Button: one action per symbol", hold_setup, hold_check),
 ]
 
 puzzles = [setup() for _, _, setup, _ in MODULES]
@@ -225,6 +227,8 @@ def show_module(i):
     print(f"\n=== Module {i+1}/{len(MODULES)}: {name} ===")
     print(puzzles[i]["clue"])
     print("  Controls:", controls)
+    setLED(puzzles[i].get("led", "OFF"))
+    show_oled(puzzles[i].get("oled", ""))
 
 # main game
 strikes = 0
