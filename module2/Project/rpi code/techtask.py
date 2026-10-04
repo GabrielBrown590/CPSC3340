@@ -9,11 +9,15 @@ from luma.core.interface.serial import i2c
 from luma.core.render import canvas
 from luma.oled.device import ssd1306
 from PIL import ImageFont
+from luma.core.device import dummy
+timer = dummy()
 
 #setup play and timer OLED
 oled = ssd1306(i2c(port=1, address=0x3C))
-timer = ssd1306(i2c(port=1, address=0x3D))
+#timer = ssd1306(i2c(port=1, address=0x3D))
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
+
+
 
 #setup serial for the joystick
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
