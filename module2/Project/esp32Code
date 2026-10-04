@@ -1,0 +1,24 @@
+//TODO put in the right pins
+const int joystick1xpin = 0;
+const int joystick1yPin = 0;
+const int joystick2xpin = 0;
+const int joystick2yPin = 0;
+const int joystick3xpin = 0;
+const int joystick3yPin = 0;
+
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int xval1 = analogRead(joystick1xpin);
+  int yval1 = analogRead(joystick1yPin);
+  int xval2 = analogRead(joystick2xpin);
+  int yval2 = analogRead(joystick2yPin);
+  int xval3 = analogRead(joystick3xpin);
+  int yval3 = analogRead(joystick3yPin);
+
+  Serial.printf("%d %d %d\n", xval1, xval2, xval3);
+  delay(50);
+}

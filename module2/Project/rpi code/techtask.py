@@ -243,7 +243,7 @@ def maze_setup():
     #distance to the target, from near to far
     xdistance = ["WHITE", "BLUE", "YELLOW", "RED", "GREEN"]
     ydistance = ["ZAP", "RUE", "EVE", "ART", "RIG"]
-    zdistance = ["z", "v", "j", "y", "u"]
+    zdistance = [0, 0.2, 0.35, 0.6, 1.0]
 
     #generate player and target location
     playerPos = [random.randint(0,4), random.randint(0,4), random.randint(0,4)]
@@ -257,7 +257,7 @@ def maze_setup():
     z = abs(playerPos[2] - targetPos[2])
     return {"playerPos": playerPos, "targetPos": targetPos, "pushed": [0, 0, 0],
             "x distances": xdistance, "y distances": ydistance, "z distances": zdistance,
-            "led": xdistance[x], "oled": f"{ydistance[y]} {zdistance[z]}",
+            "led": xdistance[x], "oled": f"{ydistance[y]}",
             "clue": "Read the display."}
 
 def maze_check(p, now, last):
@@ -275,12 +275,21 @@ def maze_check(p, now, last):
             p["playerPos"][i] += direction
         p["pushed"][i] = direction
 
-    #work out the new distances
+    #calculate the new distances
     x = abs(p["playerPos"][0] - p["targetPos"][0])
     y = abs(p["playerPos"][1] - p["targetPos"][1])
     z = abs(p["playerPos"][2] - p["targetPos"][2])
-    led = p["x distances"][x]
-    oled = f"{p['y distances'][y]} {p['z distances'][z]}"
+    oled = p["y distances"][y]
+
+    #LED color = x distance, flash speed = z distance
+    color = p["x distances"][x]
+    flash = p["z distances"][z]
+
+    #smaller the denominator the quicker this fraction will grow causing faster flashing.
+    if flash == 0 or int(time.time() / flash) % 2 == 0:
+        led = color
+    else:
+        led = "OFF"
 
     #update the displays only if they changed
     if led != p["led"]:
