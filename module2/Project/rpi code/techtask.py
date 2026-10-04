@@ -295,7 +295,8 @@ def maze_check(p, now, last):
         if p["playerPos"] == p["targetPos"]:
             setLED("OFF")
             return "solved"
-        return "strike"
+        else:
+            return "strike"
     return None
 
 
