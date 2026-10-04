@@ -3,6 +3,7 @@ from signal import pause
 from RPi import GPIO
 import random
 import time
+import serial
 #TODO make sure we install this stuff
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas
@@ -14,13 +15,14 @@ oled = ssd1306(i2c(port=1, address=0x3C))
 timer = ssd1306(i2c(port=1, address=0x3D))
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
 
+#setup serial for the joystick
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+
 
 GPIO.setmode(GPIO.BCM)
 
 
-GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#joystick switch input
 GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #TODO fill in buttons with pin info
@@ -44,7 +46,17 @@ BLUE_PIN = 0
 for pin in (RED_PIN,GREEN_PIN,BLUE_PIN):
     GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
+#handle the joysticks
+joy_values = [2048, 2048, 2048]
 
+def read_joysticks():
+    global joy_values
+    while ser.in_waiting:
+        parts = ser.readline().decode("ascii", errors="ignore").split()
+        #makes sure the input is all good
+        if len(parts) == 3 and all(v.isdigit() for v in parts):
+            joy_values = [int(v) for v in parts]
+    return joy_values
 
 
 def setLED(name):
@@ -69,7 +81,7 @@ def show_oled(text):
 timer_text = None
 def show_timer(text):
     global timer_text
-    if text == timer_text:      # already showing this, nothing to do
+    if text == timer_text:
         return
     timer_text = text
     with canvas(timer) as draw:
@@ -78,6 +90,7 @@ def show_timer(text):
 
     
 def read_inputs():
+        js1, js2, js3 = read_joysticks()
         return {
             "blue_button": GPIO.input(BLUE_BUTTON),
             "red_button": GPIO.input(RED_BUTTON),
@@ -85,10 +98,12 @@ def read_inputs():
             "yellow_button": GPIO.input(YELLOW_BUTTON),
             "switch1": GPIO.input(SWITCH1),
             "switch2": GPIO.input(SWITCH2),
-            "x": 1-GPIO.input(23),
-            "y": 1-GPIO.input(24),
-            "joySW": 1 - GPIO.input(22)
+            "js1": js1,
+            "js2": js2,
+            "js3": js3,
+            "js1sw": 1 - GPIO.input(22)
             }
+
     
 def pressed(name, now, last):
     return now[name] == 1 and last[name] == 0
@@ -222,10 +237,73 @@ def hold_check(p, now, last):
         return "strike"
     return None
 
+#Maze game
+#player dropped into a 3d grid, the LED and word tell them how far they are from the target
+def maze_setup():
+    #distance to the target, from near to far
+    xdistance = ["WHITE", "BLUE", "YELLOW", "RED", "GREEN"]
+    ydistance = ["ZAP", "RUE", "EVE", "ART", "RIG"]
+    zdistance = ["z", "v", "j", "y", "u"]
+
+    #generate player and target location
+    playerPos = [random.randint(0,4), random.randint(0,4), random.randint(0,4)]
+    targetPos = [random.randint(0,4), random.randint(0,4), random.randint(0,4)]
+    while playerPos == targetPos:
+        targetPos = [random.randint(0,4), random.randint(0,4), random.randint(0,4)]
+
+    #starting distance on each axis
+    x = abs(playerPos[0] - targetPos[0])
+    y = abs(playerPos[1] - targetPos[1])
+    z = abs(playerPos[2] - targetPos[2])
+    return {"playerPos": playerPos, "targetPos": targetPos, "pushed": [0, 0, 0],
+            "x distances": xdistance, "y distances": ydistance, "z distances": zdistance,
+            "led": xdistance[x], "oled": f"{ydistance[y]} {zdistance[z]}",
+            "clue": "Read the display."}
+
+def maze_check(p, now, last):
+    sticks = ["js1", "js2", "js3"]
+    for i in range(3):
+        value = now[sticks[i]]
+        if value > 3000:
+            direction = 1
+        elif value < 1000:
+            direction = -1
+        else:
+            direction = 0
+        #move one step, only when the stick first leaves the center
+        if direction != 0 and p["pushed"][i] == 0 and direction + p["playerPos"][i] < 5 and direction + p["playerPos"][i] > -1:
+            p["playerPos"][i] += direction
+        p["pushed"][i] = direction
+
+    #work out the new distances
+    x = abs(p["playerPos"][0] - p["targetPos"][0])
+    y = abs(p["playerPos"][1] - p["targetPos"][1])
+    z = abs(p["playerPos"][2] - p["targetPos"][2])
+    led = p["x distances"][x]
+    oled = f"{p['y distances'][y]} {p['z distances'][z]}"
+
+    #update the displays only if they changed
+    if led != p["led"]:
+        p["led"] = led
+        setLED(led)
+    if oled != p["oled"]:
+        p["oled"] = oled
+        show_oled(oled)
+
+    #click to lock in
+    if pressed("js1sw", now, last):
+        if p["playerPos"] == p["targetPos"]:
+            setLED("OFF")
+            return "solved"
+        return "strike"
+    return None
+
+
 # setup the game
 MODULES = [
     ("The Button", "Button: press   X: submit", button_setup, button_check),
     ("Hold", "X / Y / Button: one action per symbol", hold_setup, hold_check),
+    ("Maze","", maze_setup,maze_check)
 ]
 
 puzzles = [setup() for _, _, setup, _ in MODULES]
@@ -281,7 +359,7 @@ try:
             current+=1
             print("  Module solved!")
             if all(solved):
-                show_timer("you WIN!")
+                show_timer("U WIN!")
                 time.sleep(3)
                 break
             show_module(current)
