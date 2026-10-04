@@ -7,6 +7,9 @@
 	-lastly we could just read the data using data.read()
 -We struggled with the uploading taking a long time on the esp32 so before we could test this we started building out circuit
 -We connected the two breadboards to make 1 large breadboard
--The switch 
--we had to switch computers to get around te hanging during upload, the 2nd computer worked perfectly.
+-The switch and button had one side wired to the ground and the other side wired to the GPIO.
+-we had to switch computers to get around te hanging during upload, the 2nd computer worked after downloading new drivers.
+-We then also had a quick issue about "No serial data received." This was initially fixed by taking out the ESP32 but eventually fixed itself.
 -We uploaded the test code and then to read it all we had to do was create a serial port and use serial.readline().decode("ascii")
+-Next I tried to get the joystick working. This led to many problems that ended up stemming from the fact that one of the pins of the esp32 wasn't fully in the breadboard
+-Once this was fixed I could read the joystick using the analogRead() function
