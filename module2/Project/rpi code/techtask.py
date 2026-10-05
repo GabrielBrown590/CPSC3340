@@ -10,11 +10,10 @@ from luma.core.render import canvas
 from luma.oled.device import ssd1306
 from PIL import ImageFont
 from luma.core.device import dummy
-timer = dummy()
 
 #setup play and timer OLED
 oled = ssd1306(i2c(port=1, address=0x3C))
-#timer = ssd1306(i2c(port=1, address=0x3D))
+timer = ssd1306(i2c(port=3, address=0x3D))
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
 
 
@@ -303,8 +302,8 @@ def maze_check(p, now, last):
         p["oled"] = oled
         show_oled(oled)
 
-    #click to lock in
-    if pressed("js1sw", now, last):
+    #click green button to lock in
+    if pressed("green_button", now, last):
         if p["playerPos"] == p["targetPos"]:
             setLED("OFF")
             return "solved"
