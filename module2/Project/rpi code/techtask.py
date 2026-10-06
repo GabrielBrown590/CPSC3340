@@ -13,7 +13,8 @@ from luma.core.device import dummy
 
 #setup play and timer OLED
 oled = ssd1306(i2c(port=1, address=0x3C))
-timer = ssd1306(i2c(port=3, address=0x3C))
+#timer = ssd1306(i2c(port=3, address=0x3C))
+timer = dummy()
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
 
 
