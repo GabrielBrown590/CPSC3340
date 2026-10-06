@@ -101,9 +101,9 @@ def read_inputs():
             "yellow_button": GPIO.input(YELLOW_BUTTON),
             "switch1": GPIO.input(SWITCH1),
             "switch2": GPIO.input(SWITCH2),
-            "js1": js1,
-            "js2": js2,
-            "js3": js3,
+            "js1": js2,
+            "js2": js3,
+            "js3": js1,
             "js1sw": 1 - GPIO.input(22)
             }
 
