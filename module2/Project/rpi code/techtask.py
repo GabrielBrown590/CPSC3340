@@ -13,7 +13,7 @@ from luma.core.device import dummy
 
 #setup play and timer OLED
 oled = ssd1306(i2c(port=1, address=0x3C))
-timer = ssd1306(i2c(port=3, address=0x3D))
+timer = ssd1306(i2c(port=3, address=0x3C))
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
 
 
@@ -29,23 +29,23 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 #TODO fill in buttons with pin info
-RED_BUTTON = 0
-GREEN_BUTTON = 0
-BLUE_BUTTON = 0
-YELLOW_BUTTON = 0
+RED_BUTTON = 5
+GREEN_BUTTON = 6
+BLUE_BUTTON = 13
+YELLOW_BUTTON = 19
 for pin in (RED_BUTTON, GREEN_BUTTON, BLUE_BUTTON, YELLOW_BUTTON):
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #TODO fill in with switch pin info
-SWITCH1 = 0
-SWITCH2 = 0
+SWITCH1 = 17
+SWITCH2 = 27
 for pin in (SWITCH1, SWITCH2):
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 #TODO fill in with led pin info
-RED_PIN = 0
-GREEN_PIN = 0
-BLUE_PIN = 0
+RED_PIN = 16
+GREEN_PIN = 20
+BLUE_PIN = 21
 for pin in (RED_PIN,GREEN_PIN,BLUE_PIN):
     GPIO.setup(pin, GPIO.OUT, initial=GPIO.LOW)
 
