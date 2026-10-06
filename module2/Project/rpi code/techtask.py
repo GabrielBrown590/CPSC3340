@@ -112,7 +112,7 @@ def pressed(name, now, last):
     return now[name] == 1 and last[name] == 0
 
 # game settings
-TIME_LIMIT = 180
+TIME_LIMIT = 30
 MAX_STRIKES = 3
 start = time.time()
 
