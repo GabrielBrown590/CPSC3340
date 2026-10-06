@@ -316,6 +316,7 @@ def show_module(i):
 
 # main game
 strikes = 0
+last_print = 0
 strike_until = 0
 current = 0
 last_announce = None
@@ -327,6 +328,9 @@ show_module(current)
 try:
     while True:
         now = read_inputs()
+        if time.time() - last_print >= 2:
+            print(now)
+            last_print = time.time()
 
         # timer
         remaining = time_left()
