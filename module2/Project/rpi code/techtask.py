@@ -240,12 +240,12 @@ def hold_check(p, now, last):
     return None
 
 #Maze game
-#player dropped into a 3d grid, the LED and word tell them how far they are from the target
+#player dropped into a 3d grid, the three codes on the display tell them how far they are from the target
 def maze_setup():
     #distance to the target, from near to far
     xdistance = ["WHITE", "BLUE", "YELLOW", "RED", "GREEN"]
     ydistance = ["ZAP", "RUE", "EVE", "ART", "RIG"]
-    zdistance = [0, 0.2, 0.35, 0.6, 1.0]
+    zdistance = ["z", "v", "j", "y", "u"]
 
     #generate player and target location
     playerPos = [random.randint(0,4), random.randint(0,4), random.randint(0,4)]
@@ -259,7 +259,7 @@ def maze_setup():
     z = abs(playerPos[2] - targetPos[2])
     return {"playerPos": playerPos, "targetPos": targetPos, "pushed": [0, 0, 0],
             "x distances": xdistance, "y distances": ydistance, "z distances": zdistance,
-            "led": xdistance[x], "oled": f"{ydistance[y]}",
+            "oled": f"{xdistance[x]}\n{ydistance[y]} {zdistance[z]}",
             "clue": "Read the display."}
 
 def maze_check(p, now, last):
@@ -281,22 +281,9 @@ def maze_check(p, now, last):
     x = abs(p["playerPos"][0] - p["targetPos"][0])
     y = abs(p["playerPos"][1] - p["targetPos"][1])
     z = abs(p["playerPos"][2] - p["targetPos"][2])
-    oled = p["y distances"][y]
+    oled = f"{p['x distances'][x]}\n{p['y distances'][y]} {p['z distances'][z]}"
 
-    #LED color = x distance, flash speed = z distance
-    color = p["x distances"][x]
-    flash = p["z distances"][z]
-
-    #smaller the denominator the quicker this fraction will grow causing faster flashing.
-    if flash == 0 or int(time.time() / flash) % 2 == 0:
-        led = color
-    else:
-        led = "OFF"
-
-    #update the displays only if they changed
-    if led != p["led"]:
-        p["led"] = led
-        setLED(led)
+    #update the display only if it changed
     if oled != p["oled"]:
         p["oled"] = oled
         show_oled(oled)
@@ -304,17 +291,15 @@ def maze_check(p, now, last):
     #click green button to lock in
     if pressed("green_button", now, last):
         if p["playerPos"] == p["targetPos"]:
-            setLED("OFF")
             return "solved"
         else:
             return "strike"
     return None
 
-
 # setup the game
 MODULES = [
     ("The Button", "Button: press   X: submit", button_setup, button_check),
-    ("Hold", "X / Y / Button: one action per symbol", hold_setup, hold_check),
+    #("Hold", "X / Y / Button: one action per symbol", hold_setup, hold_check),
     ("Maze","", maze_setup,maze_check)
 ]
 
