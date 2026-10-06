@@ -15,8 +15,7 @@ from luma.core.device import dummy
 oled = ssd1306(i2c(port=1, address=0x3C))
 #timer = ssd1306(i2c(port=3, address=0x3C))
 timer = dummy()
-BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
-
+BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
 
 
 #setup serial for the joystick
@@ -154,12 +153,12 @@ def button_setup():
                ["yellow_button", "red_button", "green_button", "blue_button"],
                ["blue_button", "yellow_button", "green_button", "red_button"]),
 }
-    LED_color = random.choice(["RED","GREEN","BLUE","YELLOW","WHITE"])
-    setLED(LED_color)
+    color = random.choice(["RED","GREEN","BLUE","YELLOW","WHITE"])
 
-    fact, if_true, if_false = BUTTON_RULES[LED_color]
+    fact, if_true, if_false = BUTTON_RULES[color]
     order = if_true if fact else if_false
-    return {"order": order, "step": 0, "clue": f"Serial number: {SERIAL}","led": LED_color, "oled": SERIAL,}
+    return {"order": order, "step": 0, "clue": f"Serial number: {SERIAL}",
+            "oled": f"{color}\n{SERIAL}"}
 
 def button_check(p, now, last):
     for button in  ["red_button", "green_button", "blue_button", "yellow_button"]:
@@ -171,7 +170,6 @@ def button_check(p, now, last):
                 p["step"] += 1
                 print(f" step {p['step']} correct")
                 if p['step'] == len(p["order"]):
-                    setLED("OFF")
                     return "solved"
 
 # Hold game
