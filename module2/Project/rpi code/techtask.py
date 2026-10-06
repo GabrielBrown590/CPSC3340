@@ -313,7 +313,7 @@ def maze_check(p, now, last):
     return None
 # setup the game
 MODULES = [
-    #("The Button", "Button: press   X: submit", button_setup, button_check),
+    ("The Button", "Button: press   X: submit", button_setup, button_check),
     #("Hold", "X / Y / Button: one action per symbol", hold_setup, hold_check),
     ("Maze","", maze_setup,maze_check)
 ]
