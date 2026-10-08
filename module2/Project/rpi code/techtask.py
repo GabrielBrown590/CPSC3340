@@ -16,7 +16,7 @@ oled = ssd1306(i2c(port=1, address=0x3C))
 timer = ssd1306(i2c(port=3, address=0x3C))
 #timer = dummy()
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
-
+BIG2 = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48)
 
 #setup serial for the joystick
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
@@ -88,7 +88,7 @@ def show_timer(text):
         return
     timer_text = text
     with canvas(timer) as draw:
-        draw.text((0, 0), text, font=BIG, fill="white")
+        draw.text((0, 0), text, font=BIG2, fill="white")
 
 
     
@@ -112,7 +112,7 @@ def pressed(name, now, last):
     return now[name] == 1 and last[name] == 0
 
 # game settings
-TIME_LIMIT = 60
+TIME_LIMIT = 90
 MAX_STRIKES = 3
 start = time.time()
 
