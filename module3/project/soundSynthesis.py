@@ -76,10 +76,10 @@ class Bell:
         self.pattern = Pattern(self.ring, time=4)
     #ring functon chooses the note and plays it
     def ring(self):
-        self.oscillation.carrier = random.choice(scale)
         self.envelope.play()
         self.pattern.time = random.uniform(3,8)
     def start(self):
+        self.oscillation.carrier = random.choice(scale)
         self.pattern.play()
         self.volume.value = 1
 bells = [Bell() for i in range(12)]
