@@ -16,7 +16,7 @@ oled = ssd1306(i2c(port=1, address=0x3C))
 timer = ssd1306(i2c(port=3, address=0x3C))
 #timer = dummy()
 BIG = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
-
+BIG2 = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 48)
 
 #setup serial for the joystick
 ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
@@ -88,7 +88,7 @@ def show_timer(text):
         return
     timer_text = text
     with canvas(timer) as draw:
-        draw.text((0, 0), text, font=BIG, fill="white")
+        draw.text((0, 0), text, font=BIG2, fill="white")
 
 
     
@@ -101,9 +101,9 @@ def read_inputs():
             "yellow_button": GPIO.input(YELLOW_BUTTON),
             "switch1": GPIO.input(SWITCH1),
             "switch2": GPIO.input(SWITCH2),
-            "js1": js2,
-            "js2": js3,
-            "js3": js1,
+            "js1": js1,
+            "js2": js2,
+            "js3": js3,
             "js1sw": 1 - GPIO.input(22)
             }
 
@@ -112,7 +112,7 @@ def pressed(name, now, last):
     return now[name] == 1 and last[name] == 0
 
 # game settings
-TIME_LIMIT = 30
+TIME_LIMIT = 90
 MAX_STRIKES = 3
 start = time.time()
 
@@ -241,9 +241,6 @@ def hold_check(p, now, last):
 
 #Maze game
 #player dropped into a 3d grid, the three codes on the display tell them how far they are from the target
-#Maze game
-#player dropped into a 3d grid, the three codes on the display tell them how far they are from the target
-#js2 picks the dimension (marked with *), js1 moves along it
 def maze_setup():
     #distance to the target, from near to far
     xdistance = ["WHITE", "BLUE", "YELLOW", "RED", "GREEN"]
@@ -260,44 +257,31 @@ def maze_setup():
     x = abs(playerPos[0] - targetPos[0])
     y = abs(playerPos[1] - targetPos[1])
     z = abs(playerPos[2] - targetPos[2])
-    return {"playerPos": playerPos, "targetPos": targetPos,
-            "dimension": 0, "pushed": [0, 0],
+    return {"playerPos": playerPos, "targetPos": targetPos, "pushed": [0, 0, 0],
             "x distances": xdistance, "y distances": ydistance, "z distances": zdistance,
-            "oled": f"*{xdistance[x]}\n{ydistance[y]} {zdistance[z]}",
+            "oled": f"{xdistance[x]}\n{ydistance[y]} {zdistance[z]}",
             "clue": "Read the display."}
 
 def maze_check(p, now, last):
-    #which way is each stick pushed? -1, 0 (centered) or 1
-    directions = []
-    for stick in ["js1", "js2"]:
-        value = now[stick]
+    sticks = ["js1", "js2", "js3"]
+    for i in range(3):
+        value = now[sticks[i]]
         if value > 3000:
-            directions.append(1)
+            direction = 1
         elif value < 1000:
-            directions.append(-1)
+            direction = -1
         else:
-            directions.append(0)
-
-    #js2 changes which dimension is selected
-    if directions[1] != 0 and p["pushed"][1] == 0:
-        p["dimension"] = (p["dimension"] + directions[1]) % 3
-
-    #js1 moves one step along the selected dimension
-    d = p["dimension"]
-    if directions[0] != 0 and p["pushed"][0] == 0 and directions[0] + p["playerPos"][d] < 5 and directions[0] + p["playerPos"][d] > -1:
-        p["playerPos"][d] += directions[0]
-
-    p["pushed"] = directions
+            direction = 0
+        #move one step, only when the stick first leaves the center
+        if direction != 0 and p["pushed"][i] == 0 and direction + p["playerPos"][i] < 5 and direction + p["playerPos"][i] > -1:
+            p["playerPos"][i] += direction
+        p["pushed"][i] = direction
 
     #calculate the new distances
     x = abs(p["playerPos"][0] - p["targetPos"][0])
     y = abs(p["playerPos"][1] - p["targetPos"][1])
     z = abs(p["playerPos"][2] - p["targetPos"][2])
-
-    #build the display text, with * in front of the selected dimension
-    items = [p["x distances"][x], p["y distances"][y], p["z distances"][z]]
-    items[d] = "*" + items[d]
-    oled = f"{items[0]}\n{items[1]} {items[2]}"
+    oled = f"{p['x distances'][x]}\n{p['y distances'][y]} {p['z distances'][z]}"
 
     #update the display only if it changed
     if oled != p["oled"]:
@@ -311,6 +295,7 @@ def maze_check(p, now, last):
         else:
             return "strike"
     return None
+
 # setup the game
 MODULES = [
     ("The Button", "Button: press   X: submit", button_setup, button_check),
