@@ -10,6 +10,12 @@ sock.bind((IP, PORT))
 
 
 s = Server(duplex=0, buffersize=1024)
+
+names, indexes = pa_get_output_devices()
+for wanted in ("pipewire", "pulse", "default"):
+    if wanted in names:
+        s.setOutputDevice(indexes[names.index(wanted)])
+        break
 s.boot()
 s.start()
 

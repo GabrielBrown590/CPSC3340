@@ -26,7 +26,7 @@ int voyageStart;
 const char* ssid = "yale wireless";
 const char* password = "";
 
-const char* pcIP = "10.66.202.184";
+const char* pcIP = "10.67.64.78";
 const int pcPort = 3333;
 WiFiUDP udp;
 
