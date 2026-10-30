@@ -1,0 +1,24 @@
+Lab 6
+
+-To set up the photoresister we set up the wiring such that there was a cable running to the photoresister from the power, and from a regular resister to ground. We then put the other end of the photoresister and the regular resister on the same row of the breadboard. Lastly we set up a gpio to read the voltage in the middle of this circuit.
+
+-This could then be read as a regular analog input on the esp32
+
+-Since the esp32 was already netregged we did not have to do this step
+
+-We used the Arduino wifi.h library to have the esp32 act as a wifi server over yalewireless on port 3333. It essentially started up a server, and the just repeatedly broadcast the value to the ip of our pi via udp. We did this via a udp object with upd.beginPacket, upd.write, and udp.endpacket.
+
+-We came across an issue where analogread gave us a int but udp would not take it so we had to convert to our int a uint8_t.
+
+-We came across another issue which was the udp library expected a pointer to our data to be included in a message, not the data itself but this was also easily fixed
+
+-We then wrote a python script using the socket module which received the udp packet and printed it.
+
+-For a while we struggled with interpreting the data until we realzed we were sending an it and just had to use python's int.from_bytes function
+
+-We then tried to sonify the data using ipd.Audio to produce a sound that varied from middle c based on the value sent by the esp32 but this failed since there were no speakers on the monitor.
+
+-We then moved onto drawing a turle object using python's turtle library and having it resize based on the input from the esp32
+
+-We then had some lag issues but this was fixable by adding a counter and resizng the turtle less frequently.
+

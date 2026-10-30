@@ -1,0 +1,123 @@
+
+#include "WiFi.h"
+
+const int piezoPin = 4;
+const int openPin = 40;
+
+//var for open
+int bookOpen = 0;
+
+//vars for handling stuff
+const int baseHandle = 50;//this or below counts as the book being at rest
+const int lightHandle = 150; //above this value counts as light handling
+const int roughHandle = 300;//above this value counts as rough handling
+int numLights;
+int numRoughs;
+
+//vars for voyage stuff
+int activeJourney;
+const int voyageTimeout = 1000 * 10; // 10 secs at baseHandle to timeout
+int lastActivityTime;
+int voyageStart;
+
+
+
+//wifi stuff
+const char* ssid = "yale wireless";
+const char* password = "";
+
+const char* pcIP = "10.66.202.184";
+const int pcPort = 3333;
+WiFiUDP udp;
+
+void startJourney()
+{
+    activeJourney = 1;
+    numLights = 0;
+    numRoughs = 0;
+    lastActivityTime = millis();
+    voyageStart = millis();
+
+}
+
+unsigned long openSteadySince = 0; //needed for debouncing
+
+void checkOpen()
+{
+  int readingOpen = digitalRead(openPin);   // HIGH = strips apart = book open
+  if (readingOpen == bookOpen) {
+    openSteadySince = millis();             // nothing changed
+    return;
+  }
+  if (millis() - openSteadySince < 300) {
+    return;                                 // changed, but not for long enough yet
+  }
+  bookOpen = readingOpen;
+  udp.beginPacket(pcIP, pcPort);
+  udp.print(bookOpen ? "OPEN" : "CLOSE");
+  udp.endPacket();
+}
+  
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid);
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    activeJourney = 0;
+    numLights = 0;
+    numRoughs = 0;
+    pinMode(openPin, INPUT_PULLUP);
+
+}
+
+void sendJourney(int lights, int roughs, int voyageTime)
+{
+  udp.beginPacket(pcIP, pcPort);
+  udp.printf("%d %d %d", lights, roughs, voyageTime);
+  udp.endPacket();
+}
+
+void loop() {
+  checkOpen();
+  int piezoReading = analogRead(piezoPin);
+  if (activeJourney) //we're in a journey
+  {
+    if (piezoReading <= baseHandle)
+    {
+      if(millis()-lastActivityTime > voyageTimeout)
+      {
+        //end voyage and send data to pi
+        sendJourney(numLights, numRoughs, lastActivityTime-voyageStart);
+        activeJourney = 0;
+        return;
+      }
+    }
+    else if (piezoReading > roughHandle)
+    {
+      lastActivityTime = millis();
+      numRoughs++;
+    }
+    else if (piezoReading > lightHandle)
+    {
+      lastActivityTime = millis();
+      numLights++;
+    }
+    else //some handling below the light level
+    {
+      lastActivityTime = millis();
+    }
+  }
+  else //not in journey
+  {
+    if(piezoReading > baseHandle)
+    {
+      startJourney();
+    }
+  }
+ 
+  Serial.printf("%d\n",bookOpen);
+
+  delay(5);
+}
