@@ -9,8 +9,8 @@ int bookOpen = 0;
 
 //vars for handling stuff
 const int baseHandle = 50;//this or below counts as the book being at rest
-const int lightHandle = 100; //above this value counts as light handling
-const int roughHandle = 400;//above this value counts as rough handling
+const int lightHandle = 150; //above this value counts as light handling
+const int roughHandle = 300;//above this value counts as rough handling
 int numLights;
 int numRoughs;
 
@@ -117,7 +117,7 @@ void loop() {
     }
   }
  
-  Serial.printf("%d\n",piezoReading);
+  Serial.printf("%d\n",bookOpen);
 
   delay(5);
 }

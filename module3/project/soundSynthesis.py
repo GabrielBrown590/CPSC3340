@@ -140,20 +140,20 @@ nextBell = 0
 nextWind = 0
 nextFoghorn = 0
 
-def newVoyage(numLight, numRough, mills):
+def newVoyage(numLight=None, numRough=None, mills=None):
     global nextBell, nextWind, nextFoghorn
     if numLight is None:                       # test mode: make up a voyage
         seconds = random.uniform(5, 120)
         roughness = random.random()
     else:
-        seconds = ms / 1000
-        roughness = roughs / max(1, numLight + numRough)# ratio representing roughness
+        seconds = mills / 1000
+        roughness = numRough / max(1, numLight + numRough)# ratio representing roughness
     if TEST_MODE:
         voice = random.choices(["bell", "wind", "foghorn"], weights=[6, 2, 1])[0]
     else: #real data
         if seconds > 30: #long journey
             voice = "foghorn"
-        elif numRough > numLight: # rough journey
+        elif numRough > 0: # rough journey
             voice = "bell"
         else: #light journey
             voice ="wind"
@@ -179,7 +179,6 @@ if TEST_MODE:
 calm = SigTo(1, time=4)          # 1 = normal sea; lower = hushed. Fades over 4 s
 verb = Freeverb((windMix + sea) * calm + bellMix + foghornMix, size=0.9, damp=0.6, bal=0.7)
 #combining the sounds
-verb = Freeverb(windMix + sea + bellMix + foghornMix, size=0.9, damp=0.6, bal=0.7)
 morseVerb = Freeverb(morseOscillation, size=0.4, damp=0.6, bal=0.2)
 master = Compress(verb + morseVerb, thresh=-12, ratio=6, risetime=0.005, falltime=0.2, knee=0.5)
 output = Pan(master, outs=2, pan=0.5).out()
