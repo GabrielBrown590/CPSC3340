@@ -181,7 +181,7 @@ if TEST_MODE:
 
 
 
-#s.recstart("bellsSeaWindMorse.wav")
+s.recstart("fullDocumentation.wav")
 calm = SigTo(1, time=4)          # 1 = normal sea; lower = hushed. Fades over 4 s
 verb = Freeverb((windMix + sea) * calm + bellMix + foghornMix, size=0.9, damp=0.6, bal=0.7)
 #combining the sounds
@@ -206,4 +206,4 @@ try:
         newVoyage(lights, roughs, ms)
 finally:
     s.stop()
-    #s.recstop()
+    s.recstop()
