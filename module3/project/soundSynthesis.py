@@ -8,8 +8,20 @@ PORT = 3333
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind((IP, PORT))
 
+names, indexes = pa_get_output_devices()
+print("Output devices:", list(zip(indexes, names)))
 
-s = Server(duplex=0, buffersize=1024)
+chosen = pa_get_default_output()
+for wanted in ("pipewire", "pulse", "default"):
+    if wanted in names:
+        chosen = indexes[names.index(wanted)]
+        break
+
+outputs = pa_get_devices_infos()[1]
+sr = int(outputs[chosen]["default sr"])
+print("Using device", chosen, outputs[chosen]["name"], "at", sr, "Hz")
+
+s = Server(sr=48000, duplex=0, buffersize=1024)
 
 names, indexes = pa_get_output_devices()
 for wanted in ("pipewire", "pulse", "default"):
@@ -159,7 +171,7 @@ def newVoyage(numLight=None, numRough=None, mills=None):
     else: #real data
         if seconds > 30: #long journey
             voice = "foghorn"
-        elif numRough > 0: # rough journey
+        elif numRough > 0 or numLight > 3: # rough journey
             voice = "bell"
         else: #light journey
             voice ="wind"
