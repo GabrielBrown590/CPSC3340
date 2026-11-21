@@ -1,0 +1,50 @@
+import pygame, time, serial, random
+
+#initialize the pygame audio handling
+pygame.mixer.init()
+
+gameState = 0 # current gamestate. 0 = unsubbed, 1 = subbed, 2 = hit the unsub button, 3 = verifying
+
+#start serial reading
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+data = ser.readline().decode("ascii").strip()
+
+
+#get all sound clips ready
+
+#clips that play before the player has subscribed
+enticingClips = ["sounds/forevercorp_upbeat_female_1.mp3",
+    "sounds/forevercorp_research_female_1.mp3",
+    "sounds/forevercorp_forever_female_1.mp3",
+    "sounds/forevercorp_button_female_1.mp3"]
+#clips that play once the user has subbed
+subscribeClips =  ["sounds/forevercorp_welcome_female_1.mp3"]
+#clips that play once the user hits the unsub button
+unsubButtonClips = [ "sounds/forevercorp_unsub_1_verify_id_request.mp3"]
+#clips that play once the user has inserted their card
+verifyClips = ["sounds/forevercorp_biscuit_intro.mp3",
+    "sounds/forevercorp_unsub_2_please_wait.mp3",
+    "sounds/forevercorp_unsub_3_remove_id_reminder.mp3",
+    "sounds/forevercorp_biscuit_shelter.mp3",
+    "sounds/forevercorp_unsub_4_stay_family.mp3",
+    "sounds/forevercorp_unsub_5_lose_benefits.mp3"]
+
+def updateGameState():
+    global gameState
+    gameState = ser.readline().decode("ascii").strip()
+
+def play(clip):
+    pygame.mixer.music.load(clip)
+    pygame.mixer.music.play()
+
+#game start
+while gameState == 0:
+    play(random.choice(enticingClips))
+    updateGameState()
+
+
+while pygame.mixer.music.get_busy():   # still playing
+    if not id_present():               # your sensor check
+        pygame.mixer.music.stop()
+        break
+    time.sleep(0.02)
