@@ -1,13 +1,15 @@
-import pygame, time, serial, random
+import pygame, time, serial, random, os
+
+#changedir so that the sound folder is always found
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 #initialize the pygame audio handling
 pygame.mixer.init()
 
-gameState = 0 # current gamestate. 0 = unsubbed, 1 = subbed, 2 = hit the unsub button, 3 = verifying
+gameState = 0 # current gamestate. 0 = unsubbed, 1 = subbed, 2 = hit the unsub button, 3 = verifying, 4 = finished verifying
 
 #start serial reading
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
-data = ser.readline().decode("ascii").strip()
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0.05)
 
 
 #get all sound clips ready
@@ -28,23 +30,67 @@ verifyClips = ["sounds/forevercorp_biscuit_intro.mp3",
     "sounds/forevercorp_biscuit_shelter.mp3",
     "sounds/forevercorp_unsub_4_stay_family.mp3",
     "sounds/forevercorp_unsub_5_lose_benefits.mp3"]
+ActualUnsubClips = ["sounds/forevercorp_unsub_6_unsubscribed.mp3"]
 
 def updateGameState():
     global gameState
-    gameState = ser.readline().decode("ascii").strip()
+    line = ser.readline().decode("ascii", errors="ignore").strip()
+    if line.isdigit():
+        gameState = int(line)
 
+speakerTimer = time.time() #last time audio was played, used to make sure audio is not played too frequenctly
+#plays a clip and updates speakerTime
 def play(clip):
+    while pygame.mixer.music.get_busy():
+        time.sleep(0.02)
+    global speakerTimer
+    speakerTimer = time.time()
     pygame.mixer.music.load(clip)
     pygame.mixer.music.play()
 
+#returns the time since the last aud was played in seconds
+def timeSinceLastAud():
+    global speakerTimer
+    return (time.time()-speakerTimer)
+
+#state variables for game
+playedSubSound = False
+playedAttempedUnsubSound = False
+playedActualUnsubSound = False
+
 #game start
-while gameState == 0:
-    play(random.choice(enticingClips))
-    updateGameState()
-
-
-while pygame.mixer.music.get_busy():   # still playing
-    if not id_present():               # your sensor check
-        pygame.mixer.music.stop()
-        break
-    time.sleep(0.02)
+while True:
+    while gameState == 0:
+        playedSubSound = False
+        playedAttempedUnsubSound = False
+        playedActualUnsubSound = False
+        if timeSinceLastAud() >  10:
+            play(random.choice(enticingClips))
+        updateGameState()
+        time.sleep(0.02)
+    while gameState == 1:
+        playedAttempedUnsubSound = False
+        if not playedSubSound:
+            play(subscribeClips[0])
+            playedSubSound = True
+        updateGameState()
+        time.sleep(0.02)
+    while gameState == 2:
+        if not playedAttempedUnsubSound:
+            play(unsubButtonClips[0])
+            playedAttempedUnsubSound = True
+        updateGameState()
+        time.sleep(0.02)
+    verifyIndex = 0
+    while gameState == 3:
+        if verifyIndex < len(verifyClips) and not pygame.mixer.music.get_busy():
+            play(verifyClips[verifyIndex])
+            verifyIndex += 1
+        updateGameState()
+        time.sleep(0.02)
+    while gameState == 4:
+        if not playedActualUnsubSound:
+            play(ActualUnsubClips[0])
+            playedActualUnsubSound = True
+        updateGameState()
+        time.sleep(0.02)
