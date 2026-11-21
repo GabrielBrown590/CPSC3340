@@ -9,7 +9,7 @@ pygame.mixer.init()
 gameState = 0 # current gamestate. 0 = unsubbed, 1 = subbed, 2 = hit the unsub button, 3 = verifying, 4 = finished verifying
 
 #start serial reading
-ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0.05)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0.05) # CHANGED: short timeout so there's no dead air between clips
 
 
 #get all sound clips ready
@@ -30,7 +30,8 @@ verifyClips = ["sounds/forevercorp_biscuit_intro.mp3",
     "sounds/forevercorp_biscuit_shelter.mp3",
     "sounds/forevercorp_unsub_4_stay_family.mp3",
     "sounds/forevercorp_unsub_5_lose_benefits.mp3"]
-ActualUnsubClips = ["sounds/forevercorp_unsub_6_unsubscribed.mp3"]
+#clip that plays once the user has actually unsubscribed
+ActualUnsubClips = ["sounds/forevercorp_unsub_6_unsubscribed.mp3"] # CHANGED: was empty
 
 def updateGameState():
     global gameState
@@ -82,10 +83,16 @@ while True:
         updateGameState()
         time.sleep(0.02)
     verifyIndex = 0
+    sentVerified = False # NEW
     while gameState == 3:
         if verifyIndex < len(verifyClips) and not pygame.mixer.music.get_busy():
             play(verifyClips[verifyIndex])
+            if verifyClips[verifyIndex] == "sounds/forevercorp_biscuit_shelter.mp3": # NEW
+                ser.write(b"puppy\n") # NEW: tell the ESP to move Biscuit
             verifyIndex += 1
+        if verifyIndex == len(verifyClips) and not pygame.mixer.music.get_busy() and not sentVerified: # NEW
+            ser.write(b"verified\n") # NEW: tell the ESP verification is done
+            sentVerified = True # NEW
         updateGameState()
         time.sleep(0.02)
     while gameState == 4:
