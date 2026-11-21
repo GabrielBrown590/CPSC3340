@@ -1,0 +1,13 @@
+Lab 7 Log
+
+- First wrote arduino code because we don't have motors
+- Using arduino IDE libraries for stepper and servo motors
+- Wrote code so that every 64 steps, the servo 
+- Now for wiring motor, we use the power supply to power the stepper motor
+- Used the ULN2003 Driver Board to power the stepper motor
+    - Connected the 5 pins to 5 pins, and the power supply to the + - of the driver Board
+    - The connect IN1, IN2, IN3, In4 to GPIO pins 
+    - Specifically to 15, 16, 17, 18
+- Connected servo motor by connected brown to ground, red to 5v, orange to GPIO pin 5
+- Code did not compile because of various errors (needed to declare the class variable with 2048 steps, not 64. Various typos. Increased speed to 128 steps per loop)
+- Finally worked after code compiled. 
