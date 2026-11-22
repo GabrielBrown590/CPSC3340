@@ -31,7 +31,7 @@ verifyClips = ["sounds/forevercorp_biscuit_intro.mp3",
     "sounds/forevercorp_unsub_4_stay_family.mp3",
     "sounds/forevercorp_unsub_5_lose_benefits.mp3"]
 #clip that plays once the user has actually unsubscribed
-ActualUnsubClips = ["sounds/forevercorp_unsub_6_unsubscribed.mp3"] # CHANGED: was empty
+ActualUnsubClips = ["sounds/forevercorp_unsub_6_unsubscribed.mp3"] 
 
 def updateGameState():
     global gameState
@@ -83,16 +83,16 @@ while True:
         updateGameState()
         time.sleep(0.02)
     verifyIndex = 0
-    sentVerified = False # NEW
+    sentVerified = False 
     while gameState == 3:
         if verifyIndex < len(verifyClips) and not pygame.mixer.music.get_busy():
             play(verifyClips[verifyIndex])
-            if verifyClips[verifyIndex] == "sounds/forevercorp_biscuit_shelter.mp3": # NEW
-                ser.write(b"puppy\n") # NEW: tell the ESP to move Biscuit
+            if verifyClips[verifyIndex] == "sounds/forevercorp_biscuit_shelter.mp3":
+                ser.write(b"puppy\n") 
             verifyIndex += 1
-        if verifyIndex == len(verifyClips) and not pygame.mixer.music.get_busy() and not sentVerified: # NEW
-            ser.write(b"verified\n") # NEW: tell the ESP verification is done
-            sentVerified = True # NEW
+        if verifyIndex == len(verifyClips) and not pygame.mixer.music.get_busy() and not sentVerified:
+            ser.write(b"verified\n") 
+            sentVerified = True 
         updateGameState()
         time.sleep(0.02)
     while gameState == 4:
